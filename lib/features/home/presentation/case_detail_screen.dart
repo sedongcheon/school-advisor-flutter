@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/db/app_database.dart';
+import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 import '../../notifications/data/inbox_repository.dart';
 import '../../report/data/reports_repository.dart';
+import '../../role/application/user_role_notifier.dart';
 
 /// 사안 상세 (교사용) — receiptNo 로 reports 에서 조회 + 단계 진행 버튼.
 /// reportsAllProvider 를 watch 해서 statusCode 변경 시 자동 갱신.
@@ -74,6 +77,8 @@ class CaseDetailScreen extends ConsumerWidget {
         break;
       }
     }
+    final role = ref.watch(userRoleProvider);
+    final isTeacher = role == UserRole.teacher;
 
     return Scaffold(
       backgroundColor: AppTokens.lBg,
@@ -119,7 +124,17 @@ class CaseDetailScreen extends ConsumerWidget {
               )
             : _Body(
                 report: report,
+                isTeacher: isTeacher,
                 onAdvance: () => _advance(context, ref, report!),
+                onAskAi: () {
+                  final r = report!;
+                  final prompt =
+                      '내 사안(${ReportsRepository.statusLabel(r.statusCode)} 단계)에서 '
+                      '지금 가장 먼저 해야 할 일이 뭔가요?';
+                  context.push(
+                    '${AppRoutes.chat}?prefill=${Uri.encodeQueryComponent(prompt)}',
+                  );
+                },
               ),
       ),
     );
@@ -127,9 +142,16 @@ class CaseDetailScreen extends ConsumerWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({required this.report, required this.onAdvance});
+  const _Body({
+    required this.report,
+    required this.isTeacher,
+    required this.onAdvance,
+    required this.onAskAi,
+  });
   final ReportRow report;
+  final bool isTeacher;
   final VoidCallback onAdvance;
+  final VoidCallback onAskAi;
 
   @override
   Widget build(BuildContext context) {
@@ -171,37 +193,47 @@ class _Body extends StatelessWidget {
         const _SectionLabel('타임라인'),
         _Timeline(report: report),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: FilledButton(
-                onPressed: canAdvance ? onAdvance : null,
-                child: Text(
-                  canAdvance
-                      ? '${ReportsRepository.statusLabel(next)} 단계로 진행'
-                      : '처리 완료',
+        if (isTeacher)
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: canAdvance ? onAdvance : null,
+                  child: Text(
+                    canAdvance
+                        ? '${ReportsRepository.statusLabel(next)} 단계로 진행'
+                        : '처리 완료',
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppTokens.lCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTokens.lLine),
-              ),
-              child: const Text(
-                '보고서',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: AppTokens.lPrimary,
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTokens.lCard,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTokens.lLine),
+                ),
+                child: const Text(
+                  '보고서',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppTokens.lPrimary,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          )
+        else
+          FilledButton.icon(
+            onPressed: onAskAi,
+            icon: const Icon(Icons.chat_bubble_outline, size: 16),
+            label: const Text('AI에 다음 단계 물어보기'),
+          ),
       ],
     );
   }

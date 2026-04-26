@@ -7,6 +7,7 @@ import '../../features/chat/presentation/history_screen.dart';
 import '../../features/debug/presentation/health_check_screen.dart';
 import '../../features/faq/presentation/faq_screen.dart';
 import '../../features/flowchart/presentation/procedure_flow_screen.dart';
+import '../../features/home/presentation/case_detail_screen.dart';
 import '../../features/home/presentation/role_home_router.dart';
 import '../../features/laws/presentation/law_search_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
@@ -19,7 +20,6 @@ import '../../features/report/presentation/report_form_screen.dart';
 import '../../features/role/application/user_role_notifier.dart';
 import '../../features/role/presentation/role_picker_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
-import '../../features/status/presentation/status_detail_screen.dart';
 import '../../features/status/presentation/status_lookup_screen.dart';
 
 /// 라우트 경로 상수. 화면 추가 시 이 곳에서 한 곳만 수정.
@@ -147,7 +147,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: ':receiptNo',
             builder: (context, state) {
               final r = state.pathParameters['receiptNo'] ?? '';
-              return StatusDetailScreen(receiptNo: r);
+              return CaseDetailScreen(receiptNo: r);
             },
           ),
         ],

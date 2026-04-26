@@ -1,59 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/db/app_database.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
+import '../../report/data/reports_repository.dart';
 
 /// 학폭 나침반 홈 — 새 디자인 가이드(`flutter_export/home_screen.dart`) 기반.
 ///
-/// 구조: MiniHeader → HeroCard(챗봇 진입 + 추천 칩) → 2x2 도구 그리드 → 117 배너
-class HomeScreen extends StatelessWidget {
+/// 구조: MiniHeader → HeroCard(챗봇 진입 + 추천 칩) → 2x3 도구 그리드 → 117 배너
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   static const _heroChips = ['신고 절차', '심의가 궁금해요', '보호조치'];
 
-  static const _gridItems = <_HomeMenuItem>[
-    _HomeMenuItem(
-      label: '신고하기',
-      subtitle: '익명으로 안전하게',
-      path: AppRoutes.report,
-      icon: Icons.flag_outlined,
-    ),
-    _HomeMenuItem(
-      label: '진행 상황',
-      subtitle: '접수 번호로 조회',
-      path: AppRoutes.statusLookup,
-      icon: Icons.timeline,
-    ),
-    _HomeMenuItem(
-      label: '법령 조문 찾기',
-      subtitle: '학교폭력예방법 · 시행령',
-      path: AppRoutes.laws,
-      icon: Icons.menu_book_outlined,
-    ),
-    _HomeMenuItem(
-      label: '절차 흐름도',
-      subtitle: '신고부터 심의까지',
-      path: AppRoutes.flow,
-      icon: Icons.account_tree_outlined,
-    ),
-    _HomeMenuItem(
-      label: '자주 묻는 질문',
-      subtitle: '학생·학부모가 묻는 것',
-      path: AppRoutes.faq,
-      icon: Icons.help_outline,
-    ),
-    _HomeMenuItem(
-      label: '대화 이력',
-      subtitle: '지난 대화 다시 보기',
-      path: AppRoutes.history,
-      icon: Icons.history,
-    ),
-  ];
+  static List<_HomeMenuItem> _buildGrid(ReportRow? latest) {
+    return [
+      const _HomeMenuItem(
+        label: '신고하기',
+        subtitle: '익명으로 안전하게',
+        path: AppRoutes.report,
+        icon: Icons.flag_outlined,
+      ),
+      // latestReport 가 있으면 "내 사안 보기" (직접 진입), 없으면 "진행 상황" 조회
+      if (latest != null)
+        _HomeMenuItem(
+          label: '내 사안 보기',
+          subtitle: ReportsRepository.statusLabel(latest.statusCode),
+          path: '${AppRoutes.statusLookup}/${latest.receiptNo}',
+          icon: Icons.assignment_outlined,
+        )
+      else
+        const _HomeMenuItem(
+          label: '진행 상황',
+          subtitle: '접수 번호로 조회',
+          path: AppRoutes.statusLookup,
+          icon: Icons.timeline,
+        ),
+      const _HomeMenuItem(
+        label: '법령 조문 찾기',
+        subtitle: '학교폭력예방법 · 시행령',
+        path: AppRoutes.laws,
+        icon: Icons.menu_book_outlined,
+      ),
+      const _HomeMenuItem(
+        label: '절차 흐름도',
+        subtitle: '신고부터 심의까지',
+        path: AppRoutes.flow,
+        icon: Icons.account_tree_outlined,
+      ),
+      const _HomeMenuItem(
+        label: '자주 묻는 질문',
+        subtitle: '학생·학부모가 묻는 것',
+        path: AppRoutes.faq,
+        icon: Icons.help_outline,
+      ),
+      const _HomeMenuItem(
+        label: '대화 이력',
+        subtitle: '지난 대화 다시 보기',
+        path: AppRoutes.history,
+        icon: Icons.history,
+      ),
+    ];
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final latest = ref.watch(latestReportProvider);
+    final gridItems = _buildGrid(latest);
     return Scaffold(
       backgroundColor: AppTokens.lBg,
       body: SafeArea(
@@ -68,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     _HeroCard(chips: _heroChips),
                     const _SectionLabel('다른 도구'),
-                    _Grid2x2(items: _gridItems),
+                    _Grid2x2(items: gridItems),
                     const SizedBox(height: 16),
                   ],
                 ),
