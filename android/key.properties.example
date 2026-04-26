@@ -1,0 +1,12 @@
+# 안드로이드 릴리스 서명 키 설정 (커밋 금지: .gitignore 에 이미 등록됨)
+#
+# 사용법:
+#   cp android/key.properties.example android/key.properties
+#   그 다음 storePassword / keyPassword 를 본인 키스토어 비밀번호로 교체
+#
+# storeFile 은 절대경로 권장 (상대경로는 빌드 cwd 에 따라 달라짐)
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=school_advisor
+storeFile=/Users/cheonsedong/keystores/school_advisor.jks

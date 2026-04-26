@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-04-26 — Play Console 출시 준비
+
+- `android/app/build.gradle.kts` — `key.properties` 가 있으면 release 키, 없으면 debug 키로 fallback
+- `android/key.properties.example` 템플릿 추가 (`.gitignore` 처리됨)
+- 릴리스 AAB 빌드 검증 완료: `build/app/outputs/bundle/release/app-release.aab` (54.4 MB)
+- 개인정보 처리방침 한국어 초안: `docs/08_privacy_policy.md`
+- GitHub 초기 커밋 + push (`https://github.com/sedongcheon/school-advisor-flutter`)
+
+---
+
 ## 2026-04-26 — 앱 명칭 변경: "학폭가이드" → **"학폭 나침반"**
 
 - `MaterialApp.title`, `AndroidManifest android:label`, `Info.plist CFBundleDisplayName/CFBundleName`, 홈 헤로 라벨, 설정 화면 표기, 라이선스 페이지 applicationName 모두 통일
