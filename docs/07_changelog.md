@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-04-26 — 멀티턴 다이얼로그 + 7일 컷오프 (앱 담당 4·5)
+
+- `LastSessionMeta` (freezed) — `GET /api/v1/chat/last_session` 응답 (`session_id`, `last_message_at`, `last_user_query`, `days_ago`)
+- `chat_repository.fetchLastSession()` 추가
+- `conversation_repository.findBySessionId()` — 로컬 SQLite 에서 백엔드 sessionId 로 conversation 검색
+- `ChatNotifier.maybeAutoResume(onPromptStale)`:
+  - 빈 상태일 때만 1회 호출 (`_autoResumeAttempted` 가드)
+  - `null` (이력 없음) → 새 대화 유지
+  - `daysAgo <= 7` → 자동 이어가기 (`_resumeWithSessionId` — 로컬 DB 일치 row 있으면 메시지 복원, 없으면 sessionId 만 보존)
+  - `daysAgo > 7` → `onPromptStale` 콜백 → 다이얼로그 → 사용자 선택
+- `startNewConversation()` 도 `_autoResumeAttempted = true` 로 표시 → 명시적 새 대화 후 재시도 차단
+- `stale_session_dialog.dart` — "지난 대화가 있어요" / "이어가기 / 새 대화"
+- `ChatScreen.initState` 의 `addPostFrameCallback` 으로 `maybeAutoResume` 호출
+
 ## 2026-04-26 — Play Console 출시 준비
 
 - `android/app/build.gradle.kts` — `key.properties` 가 있으면 release 키, 없으면 debug 키로 fallback

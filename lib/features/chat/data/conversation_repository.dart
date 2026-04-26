@@ -29,6 +29,15 @@ class ConversationRepository {
     )..where((t) => t.id.equals(localId))).getSingleOrNull();
   }
 
+  /// 같은 `sessionId` 를 가진 대화 중 가장 최근 1건. 없으면 null.
+  Future<ConversationRow?> findBySessionId(String sessionId) async {
+    return (_db.select(_db.conversations)
+          ..where((t) => t.sessionId.equals(sessionId))
+          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   Future<void> updateMeta({
     required int localId,
     String? title,

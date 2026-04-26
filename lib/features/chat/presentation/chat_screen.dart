@@ -17,6 +17,7 @@ import '../application/chat_notifier.dart';
 import '../data/chat_dto.dart';
 import 'widgets/input_bar.dart';
 import 'widgets/message_bubble.dart';
+import 'widgets/stale_session_dialog.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -27,6 +28,23 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(chatNotifierProvider.notifier)
+          .maybeAutoResume(
+            onPromptStale: (meta) async {
+              if (!mounted) return false;
+              final choice = await showStaleSessionDialog(context, meta);
+              return choice == StaleSessionChoice.resume;
+            },
+          );
+    });
+  }
 
   @override
   void dispose() {

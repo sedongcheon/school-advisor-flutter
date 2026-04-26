@@ -11,8 +11,9 @@ import 'notification_payload.dart';
 
 /// 알림 탭으로 도달한 페이로드를 라우터가 처리할 때까지 잠시 보관.
 /// 라우터 측이 처리 후 `null` 로 reset 한다.
-final pendingPushPayloadProvider =
-    StateProvider<NotificationPayload?>((ref) => null);
+final pendingPushPayloadProvider = StateProvider<NotificationPayload?>(
+  (ref) => null,
+);
 
 /// FCM 토큰 발급, 권한 요청, 메시지 핸들러를 관리.
 ///
@@ -33,7 +34,6 @@ class PushMessagingService {
     description: '학교폭력 관련 일반 공지·법령 개정 알림',
     importance: Importance.high,
   );
-
 
   Future<void> ensureFirebaseInitialized() async {
     if (Firebase.apps.isEmpty) {
