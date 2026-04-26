@@ -3,16 +3,78 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/app_database.dart';
 import '../../../core/theme/color_scheme.dart';
+import '../../notifications/data/inbox_repository.dart';
 import '../../report/data/reports_repository.dart';
 
-/// 사안 상세 (교사용) — receiptNo 로 reports 에서 조회 + 정적 체크리스트.
+/// 사안 상세 (교사용) — receiptNo 로 reports 에서 조회 + 단계 진행 버튼.
+/// reportsAllProvider 를 watch 해서 statusCode 변경 시 자동 갱신.
 class CaseDetailScreen extends ConsumerWidget {
   const CaseDetailScreen({required this.receiptNo, super.key});
   final String receiptNo;
 
+  Future<void> _advance(
+    BuildContext context,
+    WidgetRef ref,
+    ReportRow row,
+  ) async {
+    final next = ReportsRepository.nextStatus(row.statusCode);
+    if (next == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('다음 단계로 진행할까요?'),
+          content: Text(
+            '${ReportsRepository.statusLabel(row.statusCode)} → '
+            '${ReportsRepository.statusLabel(next)}',
+            style: const TextStyle(fontSize: 13.5, height: 1.5),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('진행'),
+            ),
+          ],
+        );
+      },
+    );
+    if (ok != true || !context.mounted) return;
+    final result = await ref
+        .read(reportsRepositoryProvider)
+        .advanceStatus(receiptNo);
+    if (result == null) return;
+    final (from, to) = result;
+    await ref
+        .read(inboxRepositoryProvider)
+        .create(
+          kind: 'milestone',
+          title: ReportsRepository.milestoneTitle(from, to),
+          detail: '$receiptNo · ${ReportsRepository.statusLabel(to)}',
+          receiptNo: receiptNo,
+        );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${ReportsRepository.statusLabel(to)} 단계로 변경되었어요.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repo = ref.watch(reportsRepositoryProvider);
+    final all = ref.watch(reportsAllProvider).value ?? const <ReportRow>[];
+    ReportRow? report;
+    for (final r in all) {
+      if (r.receiptNo == receiptNo) {
+        report = r;
+        break;
+      }
+    }
+
     return Scaffold(
       backgroundColor: AppTokens.lBg,
       appBar: AppBar(
@@ -43,15 +105,8 @@ class CaseDetailScreen extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: FutureBuilder<ReportRow?>(
-          future: repo.findByReceiptNo(receiptNo),
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final report = snap.data;
-            if (report == null) {
-              return Center(
+        child: report == null
+            ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
@@ -61,108 +116,93 @@ class CaseDetailScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              );
-            }
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              children: [
-                _StatusCard(report: report),
-                const SizedBox(height: 14),
-                if (report.body.isNotEmpty) ...[
-                  const _SectionLabel('신고 내용'),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTokens.lCard,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTokens.lLine),
-                    ),
-                    child: Text(
-                      report.body,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        color: AppTokens.lInk,
-                        height: 1.55,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                ],
-                const _SectionLabel('체크리스트'),
-                _CheckRow(
-                  text: '신고 접수 확인',
-                  done: ReportsRepository.stageIndex(report.statusCode) >= 0,
-                ),
-                _CheckRow(
-                  text: '피해학생 면담',
-                  done: ReportsRepository.stageIndex(report.statusCode) >= 1,
-                ),
-                _CheckRow(
-                  text: '관련학생 진술서 수령',
-                  done: ReportsRepository.stageIndex(report.statusCode) >= 1,
-                ),
-                _CheckRow(
-                  text: '심의위원회 개최',
-                  done: ReportsRepository.stageIndex(report.statusCode) >= 2,
-                ),
-                _CheckRow(
-                  text: '조치 결정 통보',
-                  done: ReportsRepository.stageIndex(report.statusCode) >= 3,
-                ),
-                const SizedBox(height: 14),
-                const _SectionLabel('타임라인'),
-                _Timeline(report: report),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: AppTokens.lPrimary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          '진술서 작성',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTokens.lCard,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTokens.lLine),
-                      ),
-                      child: const Text(
-                        '보고서',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppTokens.lPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
+              )
+            : _Body(
+                report: report,
+                onAdvance: () => _advance(context, ref, report!),
+              ),
       ),
+    );
+  }
+}
+
+class _Body extends StatelessWidget {
+  const _Body({required this.report, required this.onAdvance});
+  final ReportRow report;
+  final VoidCallback onAdvance;
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = ReportsRepository.stageIndex(report.statusCode);
+    final next = ReportsRepository.nextStatus(report.statusCode);
+    final canAdvance = next != null;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      children: [
+        _StatusCard(report: report),
+        const SizedBox(height: 14),
+        if (report.body.isNotEmpty) ...[
+          const _SectionLabel('신고 내용'),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppTokens.lCard,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTokens.lLine),
+            ),
+            child: Text(
+              report.body,
+              style: const TextStyle(
+                fontSize: 12.5,
+                color: AppTokens.lInk,
+                height: 1.55,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+        ],
+        const _SectionLabel('체크리스트'),
+        _CheckRow(text: '신고 접수 확인', done: stage >= 0),
+        _CheckRow(text: '피해학생 면담', done: stage >= 1),
+        _CheckRow(text: '관련학생 진술서 수령', done: stage >= 1),
+        _CheckRow(text: '심의위원회 개최', done: stage >= 2),
+        _CheckRow(text: '조치 결정 통보', done: stage >= 3),
+        const SizedBox(height: 14),
+        const _SectionLabel('타임라인'),
+        _Timeline(report: report),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton(
+                onPressed: canAdvance ? onAdvance : null,
+                child: Text(
+                  canAdvance
+                      ? '${ReportsRepository.statusLabel(next)} 단계로 진행'
+                      : '처리 완료',
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppTokens.lCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTokens.lLine),
+              ),
+              child: const Text(
+                '보고서',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppTokens.lPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -308,16 +348,15 @@ class _Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final created = report.createdAt;
     String fmt(DateTime t) =>
         '${t.month}/${t.day} ${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
     final stage = ReportsRepository.stageIndex(report.statusCode);
+    final updated = stage > 0 ? fmt(report.updatedAt) : '-';
     final items = <(String, String, bool)>[
-      (fmt(created), '신고 접수', stage >= 0),
-      ('-', '피해학생 면담', stage >= 1),
-      ('-', '관련학생 면담', stage >= 1),
-      ('-', '심의위원회', stage >= 2),
-      ('-', '조치 결정 통보', stage >= 3),
+      (fmt(report.createdAt), '신고 접수', stage >= 0),
+      (stage >= 1 ? updated : '-', '사안 조사 시작', stage >= 1),
+      (stage >= 2 ? updated : '-', '심의위원회 회부', stage >= 2),
+      (stage >= 3 ? updated : '-', '조치 결정 통보', stage >= 3),
     ];
     return Column(
       children: [

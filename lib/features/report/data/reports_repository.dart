@@ -53,6 +53,38 @@ class ReportsRepository {
     return (_db.select(_db.reports)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  /// 다음 단계로 진행. 이미 `concluded` 면 그대로 반환.
+  /// 변환에 성공하면 `(이전 코드, 새 코드)` 튜플 반환, 실패/끝상태면 null.
+  Future<(String, String)?> advanceStatus(String receiptNo) async {
+    final row = await findByReceiptNo(receiptNo);
+    if (row == null) return null;
+    final next = nextStatus(row.statusCode);
+    if (next == null) return null;
+    await (_db.update(_db.reports)..where((t) => t.id.equals(row.id))).write(
+      ReportsCompanion(
+        statusCode: Value(next),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    return (row.statusCode, next);
+  }
+
+  static String? nextStatus(String code) => switch (code) {
+    'received' => 'investigating',
+    'investigating' => 'review',
+    'review' => 'concluded',
+    _ => null,
+  };
+
+  /// `received → investigating` 같은 상태 전환을 사용자 노출 milestone 으로.
+  static String milestoneTitle(String fromCode, String toCode) =>
+      switch (toCode) {
+        'investigating' => '사안 조사가 시작됐어요',
+        'review' => '심의위원회로 회부됐어요',
+        'concluded' => '조치 결정이 통보됐어요',
+        _ => '진행 단계가 변경됐어요',
+      };
+
   /// `R-yyyy-mmdd-NNNN` 형식. NNNN 은 랜덤 4자리.
   static String _generateReceiptNo() {
     final now = DateTime.now();
