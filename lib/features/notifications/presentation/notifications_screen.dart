@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/db/app_database.dart';
+import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 import '../data/inbox_repository.dart';
 
@@ -32,7 +34,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             size: 18,
             color: AppTokens.lInk,
           ),
-          onPressed: () => Navigator.maybePop(context),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
         ),
         title: const Text(
           '알림',

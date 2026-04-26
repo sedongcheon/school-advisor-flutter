@@ -63,7 +63,13 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
             size: 18,
             color: AppTokens.lInk,
           ),
-          onPressed: () => Navigator.maybePop(context),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
         ),
         title: const Text(
           '진행 상황',

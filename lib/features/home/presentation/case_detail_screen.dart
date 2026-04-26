@@ -53,7 +53,11 @@ class CaseDetailScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('사안이 삭제되었어요.')),
       );
-      await Navigator.of(context).maybePop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(AppRoutes.home);
+      }
     }
   }
 
@@ -133,7 +137,13 @@ class CaseDetailScreen extends ConsumerWidget {
             size: 18,
             color: AppTokens.lInk,
           ),
-          onPressed: () => Navigator.maybePop(context),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.home);
+            }
+          },
         ),
         title: Text(
           '#${receiptNo.split('-').last}',

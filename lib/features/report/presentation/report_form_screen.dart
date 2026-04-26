@@ -99,7 +99,11 @@ class _ReportFormScreenState extends ConsumerState<ReportFormScreen> {
           ),
           onPressed: () {
             if (_step == 0) {
-              Navigator.maybePop(context);
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(AppRoutes.home);
+              }
             } else {
               setState(() => _step--);
             }
