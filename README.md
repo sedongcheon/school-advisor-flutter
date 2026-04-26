@@ -96,9 +96,37 @@ shared/
 
 1. **면책 동의** (`/onboarding/disclaimer`) — 체크박스 동의 후 진행 가능. `SharedPreferences` 키 `disclaimer_accepted_v1` 로 영속화.
 2. **인트로 3페이지** (`/onboarding/intro`) — 서비스 소개 페이지뷰. "건너뛰기" 또는 "시작하기".
-3. **홈** (`/`) — 기능 진입 메뉴.
+3. **역할 선택** (`/role-picker`) — 학생 / 보호자 / 교사. `userRoleProvider` 로 영속화.
+4. **홈** (`/`) — 역할별 진입 화면 (학생: 챗봇·신고하기·진행 상황 / 보호자: 자녀 카드 / 교사: 사안 리스트).
 
-> 동의 전까지 라우터 redirect 로 다른 경로 진입을 막는다.
+> 동의·역할 선택 전까지 라우터 redirect 로 다른 경로 진입을 막는다.
+
+### 전체 사용자 흐름
+
+```
+[면책] → [인트로] → [역할 선택]
+                      │
+       ┌──────────────┼─────────────────┐
+       ▼              ▼                 ▼
+   [학생 홈]      [보호자 홈]        [교사 홈]
+       │              │                 │
+       │  ┌──────────┴───────┐          │
+       ▼  ▼                  ▼          ▼
+   [챗봇]  [신고하기 3-step] [진행 상황]   [사안 리스트]
+       │       │               │           │
+       │       ▼               ▼           ▼
+       │   [R-번호 발급]   [사안 상세]  [사안 상세]
+       │                       │
+       ▼                       ▼
+   [법령 검색]            [단계 진행 / 삭제]
+   [FAQ / 절차도]
+   [알림 인박스] ◀──── (단계 변경 / 결제 / 푸시)
+   [설정 → 결제 / 알림 / 테마]
+```
+
+### 데모 모드
+
+`--dart-define=SEED_DEMO=true` 빌드 첫 실행 시 mock reports 3건 + inbox 3건이 자동 적재된다 (`lib/core/dev/demo_seeder.dart`). 운영 빌드는 항상 no-op.
 
 ---
 
@@ -202,6 +230,15 @@ shared/
 ## 다음 단계 (Phase 3.2)
 
 - Phase 3.2: 인앱결제 — **백엔드 `/api/v1/purchase/verify` 추가됨 (2026-04-26)**, 클라이언트 호출 스펙 정합 후 통합 예정
+
+## 부록 docs
+
+| 문서 | 용도 |
+|---|---|
+| [docs/02_api_integration_spec.md](docs/02_api_integration_spec.md) | 백엔드 API 스펙 (진실의 원천) |
+| [docs/07_changelog.md](docs/07_changelog.md) | 누적 변경 이력 |
+| [docs/10_store_listing.md](docs/10_store_listing.md) | Play Console / App Store 등록 카피 (한국어) |
+| [docs/11_error_catalog.md](docs/11_error_catalog.md) | 사용자 노출 에러/안내 메시지 단일 정리표 |
 
 ## 변경 이력
 

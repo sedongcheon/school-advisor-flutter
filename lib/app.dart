@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/dev/demo_seeder.dart';
 import 'core/push/notification_payload.dart';
 import 'core/push/push_messaging_service.dart';
 import 'core/routing/app_router.dart';
@@ -25,6 +26,8 @@ class _SchoolAdvisorAppState extends ConsumerState<SchoolAdvisorApp> {
     super.initState();
     // 영속화된 알림 토글이 true 면 자동으로 enable 호출
     ref.read(notificationsEnabledProvider);
+    // 데모 시드 (SEED_DEMO=true 빌드만, 첫 실행 1회)
+    Future.microtask(() => DemoSeeder.maybeSeed(ref));
   }
 
   void _handlePending(NotificationPayload? payload) {
