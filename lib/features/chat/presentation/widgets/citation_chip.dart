@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/sse/sse_event.dart';
+import '../../../../core/theme/color_scheme.dart';
 import '../../../../shared/utils/citation_parser.dart';
 
+/// 인용 칩. 새 가이드 톤 (📖 + tile tint 배경 + primaryDeep 텍스트).
 class CitationChip extends StatelessWidget {
   const CitationChip({required this.chunk, required this.onTap, super.key});
 
@@ -12,19 +14,35 @@ class CitationChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ref = CitationParser.parse(chunk.law);
-    final scheme = Theme.of(context).colorScheme;
     final tappable = ref != null;
-    return ActionChip(
-      avatar: Icon(
-        Icons.menu_book_outlined,
-        size: 16,
-        color: tappable ? scheme.primary : scheme.outline,
+    return Material(
+      color: AppTokens.lTileTint,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: tappable ? () => onTap(chunk, ref) : null,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('📖', style: TextStyle(fontSize: 11.5)),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  chunk.law,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: tappable ? AppTokens.lPrimaryDeep : AppTokens.lSub,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      label: Text(chunk.law, overflow: TextOverflow.ellipsis),
-      onPressed: tappable ? () => onTap(chunk, ref) : null,
-      tooltip: tappable ? '조문 보기' : '조회 불가',
-      shape: StadiumBorder(side: BorderSide(color: scheme.outlineVariant)),
-      backgroundColor: scheme.surface,
     );
   }
 }

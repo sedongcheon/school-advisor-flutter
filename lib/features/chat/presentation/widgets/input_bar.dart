@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/color_scheme.dart';
+
+/// 챗봇 입력 바. 새 디자인 가이드 (rounded composer + primary 전송 버튼).
 class InputBar extends StatefulWidget {
   const InputBar({required this.onSubmit, required this.enabled, super.key});
 
@@ -41,43 +44,68 @@ class _InputBarState extends State<InputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return SafeArea(
       top: false,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-        decoration: BoxDecoration(
-          color: scheme.surface,
-          border: Border(top: BorderSide(color: scheme.outlineVariant)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                focusNode: _focus,
-                enabled: widget.enabled,
-                minLines: 1,
-                maxLines: 5,
-                textInputAction: TextInputAction.newline,
-                decoration: const InputDecoration(
-                  hintText: '학폭위 절차에 대해 무엇이든 물어보세요',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+          decoration: BoxDecoration(
+            color: AppTokens.lCard,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: AppTokens.lPrimary.withValues(alpha: 0.12),
+                offset: const Offset(0, 2),
+                blurRadius: 10,
+                spreadRadius: -4,
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focus,
+                  enabled: widget.enabled,
+                  minLines: 1,
+                  maxLines: 5,
+                  textInputAction: TextInputAction.newline,
+                  decoration: const InputDecoration(
+                    hintText: '메시지를 입력하세요…',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF9AAA9F),
+                      fontSize: 13.5,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 6),
-            IconButton.filled(
-              onPressed: (_hasText && widget.enabled) ? _send : null,
-              icon: const Icon(Icons.arrow_upward),
-              tooltip: '전송',
-            ),
-          ],
+              const SizedBox(width: 6),
+              Material(
+                color: (_hasText && widget.enabled)
+                    ? AppTokens.lPrimary
+                    : AppTokens.lPrimary.withValues(alpha: 0.4),
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: (_hasText && widget.enabled) ? _send : null,
+                  child: const SizedBox(
+                    width: 34,
+                    height: 34,
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
