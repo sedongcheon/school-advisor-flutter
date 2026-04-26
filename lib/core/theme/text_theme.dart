@@ -10,8 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 /// Pretendard ttf 가 들어오면:
 /// 1. `pubspec.yaml` 의 `flutter.fonts` 주석 해제
 /// 2. 본 함수의 `_useNotoFallback` 을 `false` 로 전환
-/// Pretendard ttf 가 `assets/fonts/pretendard/` 에 번들되면 false 로 변경.
-const bool _useNotoFallback = true;
+/// Pretendard ttf 가 `assets/fonts/pretendard/` 에 번들됨.
+const bool _useNotoFallback = false;
 
 TextTheme buildAppTextTheme(TextTheme base) {
   // ignore: dead_code
