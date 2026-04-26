@@ -10,6 +10,9 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(driftDatabase(name: 'school_advisor'));
 
+  /// 인메모리 테스트용 — `NativeDatabase.memory()` 등 임의 executor 주입.
+  AppDatabase.forTesting(super.e);
+
   @override
   int get schemaVersion => 2;
 

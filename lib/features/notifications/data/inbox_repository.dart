@@ -9,9 +9,11 @@ class InboxRepository {
   final AppDatabase _db;
 
   Stream<List<InboxRow>> watchAll() {
-    return (_db.select(
-      _db.inboxItems,
-    )..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).watch();
+    return (_db.select(_db.inboxItems)..orderBy([
+          (t) => OrderingTerm.desc(t.createdAt),
+          (t) => OrderingTerm.desc(t.id),
+        ]))
+        .watch();
   }
 
   Future<int> create({

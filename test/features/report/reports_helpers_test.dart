@@ -67,10 +67,7 @@ void main() {
   group('ReportsRepository.decodeTypes', () {
     test('정상 JSON 배열 디코드', () {
       final json = jsonEncode(['사이버폭력', '언어폭력']);
-      expect(
-        ReportsRepository.decodeTypes(json),
-        ['사이버폭력', '언어폭력'],
-      );
+      expect(ReportsRepository.decodeTypes(json), ['사이버폭력', '언어폭력']);
     });
     test('빈 배열', () {
       expect(ReportsRepository.decodeTypes('[]'), isEmpty);
@@ -80,10 +77,7 @@ void main() {
     });
     test('비-string 항목은 무시', () {
       final json = jsonEncode(['사이버폭력', 123, null, '언어폭력']);
-      expect(
-        ReportsRepository.decodeTypes(json),
-        ['사이버폭력', '언어폭력'],
-      );
+      expect(ReportsRepository.decodeTypes(json), ['사이버폭력', '언어폭력']);
     });
   });
 }

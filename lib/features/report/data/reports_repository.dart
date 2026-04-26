@@ -71,9 +71,9 @@ class ReportsRepository {
 
   /// 사안 삭제. 매칭되는 row 가 있으면 true.
   Future<bool> deleteByReceiptNo(String receiptNo) async {
-    final n = await (_db.delete(_db.reports)
-          ..where((t) => t.receiptNo.equals(receiptNo)))
-        .go();
+    final n = await (_db.delete(
+      _db.reports,
+    )..where((t) => t.receiptNo.equals(receiptNo))).go();
     return n > 0;
   }
 

@@ -59,9 +59,7 @@ class ReportsRemoteRepository {
     required String receiptNo,
     required String statusCode,
   }) async {
-    debugPrint(
-      '[reports-remote] (stub) updateStatus $receiptNo → $statusCode',
-    );
+    debugPrint('[reports-remote] (stub) updateStatus $receiptNo → $statusCode');
     // TODO(reports-backend):
     // await _dio.patch<dynamic>(
     //   '/api/v1/reports/$receiptNo',
@@ -76,8 +74,9 @@ class ReportsRemoteRepository {
   }
 }
 
-final reportsRemoteRepositoryProvider =
-    FutureProvider<ReportsRemoteRepository>((ref) async {
-      final dio = await ref.watch(dioProvider.future);
-      return ReportsRemoteRepository(dio);
-    });
+final reportsRemoteRepositoryProvider = FutureProvider<ReportsRemoteRepository>(
+  (ref) async {
+    final dio = await ref.watch(dioProvider.future);
+    return ReportsRemoteRepository(dio);
+  },
+);

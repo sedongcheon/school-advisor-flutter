@@ -50,9 +50,9 @@ class CaseDetailScreen extends ConsumerWidget {
         .deleteByReceiptNo(row.receiptNo);
     if (!context.mounted) return;
     if (removed) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('사안이 삭제되었어요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('사안이 삭제되었어요.')));
       if (context.canPop()) {
         context.pop();
       } else {
