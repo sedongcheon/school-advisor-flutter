@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 
 /// 보호자 모드 홈 — 자녀 진행 카드 + 보호자 메뉴 + 117 배너.
@@ -99,17 +101,23 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: const BoxDecoration(
-              color: AppTokens.lCard,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.notifications_none,
-              size: 18,
-              color: AppTokens.lInk,
+          Material(
+            color: AppTokens.lCard,
+            shape: const CircleBorder(),
+            elevation: 1.5,
+            shadowColor: Colors.black12,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => context.push(AppRoutes.notifications),
+              child: const SizedBox(
+                width: 36,
+                height: 36,
+                child: Icon(
+                  Icons.notifications_none,
+                  size: 18,
+                  color: AppTokens.lInk,
+                ),
+              ),
             ),
           ),
         ],

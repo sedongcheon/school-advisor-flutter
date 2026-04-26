@@ -927,16 +927,1147 @@ class MessagesCompanion extends UpdateCompanion<MessageRow> {
   }
 }
 
+class $ReportsTable extends Reports with TableInfo<$ReportsTable, ReportRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReportsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _receiptNoMeta = const VerificationMeta(
+    'receiptNo',
+  );
+  @override
+  late final GeneratedColumn<String> receiptNo = GeneratedColumn<String>(
+    'receipt_no',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gradeBandMeta = const VerificationMeta(
+    'gradeBand',
+  );
+  @override
+  late final GeneratedColumn<String> gradeBand = GeneratedColumn<String>(
+    'grade_band',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typesJsonMeta = const VerificationMeta(
+    'typesJson',
+  );
+  @override
+  late final GeneratedColumn<String> typesJson = GeneratedColumn<String>(
+    'types_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _whenLabelMeta = const VerificationMeta(
+    'whenLabel',
+  );
+  @override
+  late final GeneratedColumn<String> whenLabel = GeneratedColumn<String>(
+    'when_label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _whereLabelMeta = const VerificationMeta(
+    'whereLabel',
+  );
+  @override
+  late final GeneratedColumn<String> whereLabel = GeneratedColumn<String>(
+    'where_label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _anonymousMeta = const VerificationMeta(
+    'anonymous',
+  );
+  @override
+  late final GeneratedColumn<bool> anonymous = GeneratedColumn<bool>(
+    'anonymous',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("anonymous" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _statusCodeMeta = const VerificationMeta(
+    'statusCode',
+  );
+  @override
+  late final GeneratedColumn<String> statusCode = GeneratedColumn<String>(
+    'status_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('received'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    receiptNo,
+    role,
+    gradeBand,
+    typesJson,
+    whenLabel,
+    whereLabel,
+    body,
+    anonymous,
+    statusCode,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'reports';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReportRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('receipt_no')) {
+      context.handle(
+        _receiptNoMeta,
+        receiptNo.isAcceptableOrUnknown(data['receipt_no']!, _receiptNoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptNoMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_roleMeta);
+    }
+    if (data.containsKey('grade_band')) {
+      context.handle(
+        _gradeBandMeta,
+        gradeBand.isAcceptableOrUnknown(data['grade_band']!, _gradeBandMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gradeBandMeta);
+    }
+    if (data.containsKey('types_json')) {
+      context.handle(
+        _typesJsonMeta,
+        typesJson.isAcceptableOrUnknown(data['types_json']!, _typesJsonMeta),
+      );
+    }
+    if (data.containsKey('when_label')) {
+      context.handle(
+        _whenLabelMeta,
+        whenLabel.isAcceptableOrUnknown(data['when_label']!, _whenLabelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_whenLabelMeta);
+    }
+    if (data.containsKey('where_label')) {
+      context.handle(
+        _whereLabelMeta,
+        whereLabel.isAcceptableOrUnknown(data['where_label']!, _whereLabelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_whereLabelMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    }
+    if (data.containsKey('anonymous')) {
+      context.handle(
+        _anonymousMeta,
+        anonymous.isAcceptableOrUnknown(data['anonymous']!, _anonymousMeta),
+      );
+    }
+    if (data.containsKey('status_code')) {
+      context.handle(
+        _statusCodeMeta,
+        statusCode.isAcceptableOrUnknown(data['status_code']!, _statusCodeMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReportRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReportRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      receiptNo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_no'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      gradeBand: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade_band'],
+      )!,
+      typesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}types_json'],
+      )!,
+      whenLabel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}when_label'],
+      )!,
+      whereLabel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}where_label'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      anonymous: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}anonymous'],
+      )!,
+      statusCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status_code'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReportsTable createAlias(String alias) {
+    return $ReportsTable(attachedDatabase, alias);
+  }
+}
+
+class ReportRow extends DataClass implements Insertable<ReportRow> {
+  final int id;
+  final String receiptNo;
+  final String role;
+  final String gradeBand;
+  final String typesJson;
+  final String whenLabel;
+  final String whereLabel;
+  final String body;
+  final bool anonymous;
+
+  /// received | investigating | review | concluded
+  final String statusCode;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const ReportRow({
+    required this.id,
+    required this.receiptNo,
+    required this.role,
+    required this.gradeBand,
+    required this.typesJson,
+    required this.whenLabel,
+    required this.whereLabel,
+    required this.body,
+    required this.anonymous,
+    required this.statusCode,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['receipt_no'] = Variable<String>(receiptNo);
+    map['role'] = Variable<String>(role);
+    map['grade_band'] = Variable<String>(gradeBand);
+    map['types_json'] = Variable<String>(typesJson);
+    map['when_label'] = Variable<String>(whenLabel);
+    map['where_label'] = Variable<String>(whereLabel);
+    map['body'] = Variable<String>(body);
+    map['anonymous'] = Variable<bool>(anonymous);
+    map['status_code'] = Variable<String>(statusCode);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ReportsCompanion toCompanion(bool nullToAbsent) {
+    return ReportsCompanion(
+      id: Value(id),
+      receiptNo: Value(receiptNo),
+      role: Value(role),
+      gradeBand: Value(gradeBand),
+      typesJson: Value(typesJson),
+      whenLabel: Value(whenLabel),
+      whereLabel: Value(whereLabel),
+      body: Value(body),
+      anonymous: Value(anonymous),
+      statusCode: Value(statusCode),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ReportRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReportRow(
+      id: serializer.fromJson<int>(json['id']),
+      receiptNo: serializer.fromJson<String>(json['receiptNo']),
+      role: serializer.fromJson<String>(json['role']),
+      gradeBand: serializer.fromJson<String>(json['gradeBand']),
+      typesJson: serializer.fromJson<String>(json['typesJson']),
+      whenLabel: serializer.fromJson<String>(json['whenLabel']),
+      whereLabel: serializer.fromJson<String>(json['whereLabel']),
+      body: serializer.fromJson<String>(json['body']),
+      anonymous: serializer.fromJson<bool>(json['anonymous']),
+      statusCode: serializer.fromJson<String>(json['statusCode']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'receiptNo': serializer.toJson<String>(receiptNo),
+      'role': serializer.toJson<String>(role),
+      'gradeBand': serializer.toJson<String>(gradeBand),
+      'typesJson': serializer.toJson<String>(typesJson),
+      'whenLabel': serializer.toJson<String>(whenLabel),
+      'whereLabel': serializer.toJson<String>(whereLabel),
+      'body': serializer.toJson<String>(body),
+      'anonymous': serializer.toJson<bool>(anonymous),
+      'statusCode': serializer.toJson<String>(statusCode),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ReportRow copyWith({
+    int? id,
+    String? receiptNo,
+    String? role,
+    String? gradeBand,
+    String? typesJson,
+    String? whenLabel,
+    String? whereLabel,
+    String? body,
+    bool? anonymous,
+    String? statusCode,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => ReportRow(
+    id: id ?? this.id,
+    receiptNo: receiptNo ?? this.receiptNo,
+    role: role ?? this.role,
+    gradeBand: gradeBand ?? this.gradeBand,
+    typesJson: typesJson ?? this.typesJson,
+    whenLabel: whenLabel ?? this.whenLabel,
+    whereLabel: whereLabel ?? this.whereLabel,
+    body: body ?? this.body,
+    anonymous: anonymous ?? this.anonymous,
+    statusCode: statusCode ?? this.statusCode,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ReportRow copyWithCompanion(ReportsCompanion data) {
+    return ReportRow(
+      id: data.id.present ? data.id.value : this.id,
+      receiptNo: data.receiptNo.present ? data.receiptNo.value : this.receiptNo,
+      role: data.role.present ? data.role.value : this.role,
+      gradeBand: data.gradeBand.present ? data.gradeBand.value : this.gradeBand,
+      typesJson: data.typesJson.present ? data.typesJson.value : this.typesJson,
+      whenLabel: data.whenLabel.present ? data.whenLabel.value : this.whenLabel,
+      whereLabel: data.whereLabel.present
+          ? data.whereLabel.value
+          : this.whereLabel,
+      body: data.body.present ? data.body.value : this.body,
+      anonymous: data.anonymous.present ? data.anonymous.value : this.anonymous,
+      statusCode: data.statusCode.present
+          ? data.statusCode.value
+          : this.statusCode,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReportRow(')
+          ..write('id: $id, ')
+          ..write('receiptNo: $receiptNo, ')
+          ..write('role: $role, ')
+          ..write('gradeBand: $gradeBand, ')
+          ..write('typesJson: $typesJson, ')
+          ..write('whenLabel: $whenLabel, ')
+          ..write('whereLabel: $whereLabel, ')
+          ..write('body: $body, ')
+          ..write('anonymous: $anonymous, ')
+          ..write('statusCode: $statusCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    receiptNo,
+    role,
+    gradeBand,
+    typesJson,
+    whenLabel,
+    whereLabel,
+    body,
+    anonymous,
+    statusCode,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReportRow &&
+          other.id == this.id &&
+          other.receiptNo == this.receiptNo &&
+          other.role == this.role &&
+          other.gradeBand == this.gradeBand &&
+          other.typesJson == this.typesJson &&
+          other.whenLabel == this.whenLabel &&
+          other.whereLabel == this.whereLabel &&
+          other.body == this.body &&
+          other.anonymous == this.anonymous &&
+          other.statusCode == this.statusCode &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ReportsCompanion extends UpdateCompanion<ReportRow> {
+  final Value<int> id;
+  final Value<String> receiptNo;
+  final Value<String> role;
+  final Value<String> gradeBand;
+  final Value<String> typesJson;
+  final Value<String> whenLabel;
+  final Value<String> whereLabel;
+  final Value<String> body;
+  final Value<bool> anonymous;
+  final Value<String> statusCode;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const ReportsCompanion({
+    this.id = const Value.absent(),
+    this.receiptNo = const Value.absent(),
+    this.role = const Value.absent(),
+    this.gradeBand = const Value.absent(),
+    this.typesJson = const Value.absent(),
+    this.whenLabel = const Value.absent(),
+    this.whereLabel = const Value.absent(),
+    this.body = const Value.absent(),
+    this.anonymous = const Value.absent(),
+    this.statusCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ReportsCompanion.insert({
+    this.id = const Value.absent(),
+    required String receiptNo,
+    required String role,
+    required String gradeBand,
+    this.typesJson = const Value.absent(),
+    required String whenLabel,
+    required String whereLabel,
+    this.body = const Value.absent(),
+    this.anonymous = const Value.absent(),
+    this.statusCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : receiptNo = Value(receiptNo),
+       role = Value(role),
+       gradeBand = Value(gradeBand),
+       whenLabel = Value(whenLabel),
+       whereLabel = Value(whereLabel);
+  static Insertable<ReportRow> custom({
+    Expression<int>? id,
+    Expression<String>? receiptNo,
+    Expression<String>? role,
+    Expression<String>? gradeBand,
+    Expression<String>? typesJson,
+    Expression<String>? whenLabel,
+    Expression<String>? whereLabel,
+    Expression<String>? body,
+    Expression<bool>? anonymous,
+    Expression<String>? statusCode,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (receiptNo != null) 'receipt_no': receiptNo,
+      if (role != null) 'role': role,
+      if (gradeBand != null) 'grade_band': gradeBand,
+      if (typesJson != null) 'types_json': typesJson,
+      if (whenLabel != null) 'when_label': whenLabel,
+      if (whereLabel != null) 'where_label': whereLabel,
+      if (body != null) 'body': body,
+      if (anonymous != null) 'anonymous': anonymous,
+      if (statusCode != null) 'status_code': statusCode,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ReportsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? receiptNo,
+    Value<String>? role,
+    Value<String>? gradeBand,
+    Value<String>? typesJson,
+    Value<String>? whenLabel,
+    Value<String>? whereLabel,
+    Value<String>? body,
+    Value<bool>? anonymous,
+    Value<String>? statusCode,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return ReportsCompanion(
+      id: id ?? this.id,
+      receiptNo: receiptNo ?? this.receiptNo,
+      role: role ?? this.role,
+      gradeBand: gradeBand ?? this.gradeBand,
+      typesJson: typesJson ?? this.typesJson,
+      whenLabel: whenLabel ?? this.whenLabel,
+      whereLabel: whereLabel ?? this.whereLabel,
+      body: body ?? this.body,
+      anonymous: anonymous ?? this.anonymous,
+      statusCode: statusCode ?? this.statusCode,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (receiptNo.present) {
+      map['receipt_no'] = Variable<String>(receiptNo.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (gradeBand.present) {
+      map['grade_band'] = Variable<String>(gradeBand.value);
+    }
+    if (typesJson.present) {
+      map['types_json'] = Variable<String>(typesJson.value);
+    }
+    if (whenLabel.present) {
+      map['when_label'] = Variable<String>(whenLabel.value);
+    }
+    if (whereLabel.present) {
+      map['where_label'] = Variable<String>(whereLabel.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (anonymous.present) {
+      map['anonymous'] = Variable<bool>(anonymous.value);
+    }
+    if (statusCode.present) {
+      map['status_code'] = Variable<String>(statusCode.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReportsCompanion(')
+          ..write('id: $id, ')
+          ..write('receiptNo: $receiptNo, ')
+          ..write('role: $role, ')
+          ..write('gradeBand: $gradeBand, ')
+          ..write('typesJson: $typesJson, ')
+          ..write('whenLabel: $whenLabel, ')
+          ..write('whereLabel: $whereLabel, ')
+          ..write('body: $body, ')
+          ..write('anonymous: $anonymous, ')
+          ..write('statusCode: $statusCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InboxItemsTable extends InboxItems
+    with TableInfo<$InboxItemsTable, InboxRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InboxItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _detailMeta = const VerificationMeta('detail');
+  @override
+  late final GeneratedColumn<String> detail = GeneratedColumn<String>(
+    'detail',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _receiptNoMeta = const VerificationMeta(
+    'receiptNo',
+  );
+  @override
+  late final GeneratedColumn<String> receiptNo = GeneratedColumn<String>(
+    'receipt_no',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isReadMeta = const VerificationMeta('isRead');
+  @override
+  late final GeneratedColumn<bool> isRead = GeneratedColumn<bool>(
+    'is_read',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_read" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    kind,
+    title,
+    detail,
+    receiptNo,
+    isRead,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'inbox_items';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<InboxRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('detail')) {
+      context.handle(
+        _detailMeta,
+        detail.isAcceptableOrUnknown(data['detail']!, _detailMeta),
+      );
+    }
+    if (data.containsKey('receipt_no')) {
+      context.handle(
+        _receiptNoMeta,
+        receiptNo.isAcceptableOrUnknown(data['receipt_no']!, _receiptNoMeta),
+      );
+    }
+    if (data.containsKey('is_read')) {
+      context.handle(
+        _isReadMeta,
+        isRead.isAcceptableOrUnknown(data['is_read']!, _isReadMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  InboxRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InboxRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      detail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}detail'],
+      )!,
+      receiptNo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_no'],
+      ),
+      isRead: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_read'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $InboxItemsTable createAlias(String alias) {
+    return $InboxItemsTable(attachedDatabase, alias);
+  }
+}
+
+class InboxRow extends DataClass implements Insertable<InboxRow> {
+  final int id;
+  final String kind;
+  final String title;
+  final String detail;
+  final String? receiptNo;
+  final bool isRead;
+  final DateTime createdAt;
+  const InboxRow({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.detail,
+    this.receiptNo,
+    required this.isRead,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['kind'] = Variable<String>(kind);
+    map['title'] = Variable<String>(title);
+    map['detail'] = Variable<String>(detail);
+    if (!nullToAbsent || receiptNo != null) {
+      map['receipt_no'] = Variable<String>(receiptNo);
+    }
+    map['is_read'] = Variable<bool>(isRead);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  InboxItemsCompanion toCompanion(bool nullToAbsent) {
+    return InboxItemsCompanion(
+      id: Value(id),
+      kind: Value(kind),
+      title: Value(title),
+      detail: Value(detail),
+      receiptNo: receiptNo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptNo),
+      isRead: Value(isRead),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory InboxRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InboxRow(
+      id: serializer.fromJson<int>(json['id']),
+      kind: serializer.fromJson<String>(json['kind']),
+      title: serializer.fromJson<String>(json['title']),
+      detail: serializer.fromJson<String>(json['detail']),
+      receiptNo: serializer.fromJson<String?>(json['receiptNo']),
+      isRead: serializer.fromJson<bool>(json['isRead']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'kind': serializer.toJson<String>(kind),
+      'title': serializer.toJson<String>(title),
+      'detail': serializer.toJson<String>(detail),
+      'receiptNo': serializer.toJson<String?>(receiptNo),
+      'isRead': serializer.toJson<bool>(isRead),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  InboxRow copyWith({
+    int? id,
+    String? kind,
+    String? title,
+    String? detail,
+    Value<String?> receiptNo = const Value.absent(),
+    bool? isRead,
+    DateTime? createdAt,
+  }) => InboxRow(
+    id: id ?? this.id,
+    kind: kind ?? this.kind,
+    title: title ?? this.title,
+    detail: detail ?? this.detail,
+    receiptNo: receiptNo.present ? receiptNo.value : this.receiptNo,
+    isRead: isRead ?? this.isRead,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  InboxRow copyWithCompanion(InboxItemsCompanion data) {
+    return InboxRow(
+      id: data.id.present ? data.id.value : this.id,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      title: data.title.present ? data.title.value : this.title,
+      detail: data.detail.present ? data.detail.value : this.detail,
+      receiptNo: data.receiptNo.present ? data.receiptNo.value : this.receiptNo,
+      isRead: data.isRead.present ? data.isRead.value : this.isRead,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InboxRow(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('title: $title, ')
+          ..write('detail: $detail, ')
+          ..write('receiptNo: $receiptNo, ')
+          ..write('isRead: $isRead, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, kind, title, detail, receiptNo, isRead, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InboxRow &&
+          other.id == this.id &&
+          other.kind == this.kind &&
+          other.title == this.title &&
+          other.detail == this.detail &&
+          other.receiptNo == this.receiptNo &&
+          other.isRead == this.isRead &&
+          other.createdAt == this.createdAt);
+}
+
+class InboxItemsCompanion extends UpdateCompanion<InboxRow> {
+  final Value<int> id;
+  final Value<String> kind;
+  final Value<String> title;
+  final Value<String> detail;
+  final Value<String?> receiptNo;
+  final Value<bool> isRead;
+  final Value<DateTime> createdAt;
+  const InboxItemsCompanion({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.title = const Value.absent(),
+    this.detail = const Value.absent(),
+    this.receiptNo = const Value.absent(),
+    this.isRead = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  InboxItemsCompanion.insert({
+    this.id = const Value.absent(),
+    required String kind,
+    required String title,
+    this.detail = const Value.absent(),
+    this.receiptNo = const Value.absent(),
+    this.isRead = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  }) : kind = Value(kind),
+       title = Value(title);
+  static Insertable<InboxRow> custom({
+    Expression<int>? id,
+    Expression<String>? kind,
+    Expression<String>? title,
+    Expression<String>? detail,
+    Expression<String>? receiptNo,
+    Expression<bool>? isRead,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (kind != null) 'kind': kind,
+      if (title != null) 'title': title,
+      if (detail != null) 'detail': detail,
+      if (receiptNo != null) 'receipt_no': receiptNo,
+      if (isRead != null) 'is_read': isRead,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  InboxItemsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? kind,
+    Value<String>? title,
+    Value<String>? detail,
+    Value<String?>? receiptNo,
+    Value<bool>? isRead,
+    Value<DateTime>? createdAt,
+  }) {
+    return InboxItemsCompanion(
+      id: id ?? this.id,
+      kind: kind ?? this.kind,
+      title: title ?? this.title,
+      detail: detail ?? this.detail,
+      receiptNo: receiptNo ?? this.receiptNo,
+      isRead: isRead ?? this.isRead,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (detail.present) {
+      map['detail'] = Variable<String>(detail.value);
+    }
+    if (receiptNo.present) {
+      map['receipt_no'] = Variable<String>(receiptNo.value);
+    }
+    if (isRead.present) {
+      map['is_read'] = Variable<bool>(isRead.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InboxItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('title: $title, ')
+          ..write('detail: $detail, ')
+          ..write('receiptNo: $receiptNo, ')
+          ..write('isRead: $isRead, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ConversationsTable conversations = $ConversationsTable(this);
   late final $MessagesTable messages = $MessagesTable(this);
+  late final $ReportsTable reports = $ReportsTable(this);
+  late final $InboxItemsTable inboxItems = $InboxItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [conversations, messages];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    conversations,
+    messages,
+    reports,
+    inboxItems,
+  ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
     WritePropagation(
@@ -1653,6 +2784,557 @@ typedef $$MessagesTableProcessedTableManager =
       MessageRow,
       PrefetchHooks Function({bool conversationLocalId})
     >;
+typedef $$ReportsTableCreateCompanionBuilder =
+    ReportsCompanion Function({
+      Value<int> id,
+      required String receiptNo,
+      required String role,
+      required String gradeBand,
+      Value<String> typesJson,
+      required String whenLabel,
+      required String whereLabel,
+      Value<String> body,
+      Value<bool> anonymous,
+      Value<String> statusCode,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$ReportsTableUpdateCompanionBuilder =
+    ReportsCompanion Function({
+      Value<int> id,
+      Value<String> receiptNo,
+      Value<String> role,
+      Value<String> gradeBand,
+      Value<String> typesJson,
+      Value<String> whenLabel,
+      Value<String> whereLabel,
+      Value<String> body,
+      Value<bool> anonymous,
+      Value<String> statusCode,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+class $$ReportsTableFilterComposer
+    extends Composer<_$AppDatabase, $ReportsTable> {
+  $$ReportsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptNo => $composableBuilder(
+    column: $table.receiptNo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gradeBand => $composableBuilder(
+    column: $table.gradeBand,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get typesJson => $composableBuilder(
+    column: $table.typesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get whenLabel => $composableBuilder(
+    column: $table.whenLabel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get whereLabel => $composableBuilder(
+    column: $table.whereLabel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get anonymous => $composableBuilder(
+    column: $table.anonymous,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ReportsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ReportsTable> {
+  $$ReportsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptNo => $composableBuilder(
+    column: $table.receiptNo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gradeBand => $composableBuilder(
+    column: $table.gradeBand,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get typesJson => $composableBuilder(
+    column: $table.typesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get whenLabel => $composableBuilder(
+    column: $table.whenLabel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get whereLabel => $composableBuilder(
+    column: $table.whereLabel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get anonymous => $composableBuilder(
+    column: $table.anonymous,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReportsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ReportsTable> {
+  $$ReportsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get receiptNo =>
+      $composableBuilder(column: $table.receiptNo, builder: (column) => column);
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get gradeBand =>
+      $composableBuilder(column: $table.gradeBand, builder: (column) => column);
+
+  GeneratedColumn<String> get typesJson =>
+      $composableBuilder(column: $table.typesJson, builder: (column) => column);
+
+  GeneratedColumn<String> get whenLabel =>
+      $composableBuilder(column: $table.whenLabel, builder: (column) => column);
+
+  GeneratedColumn<String> get whereLabel => $composableBuilder(
+    column: $table.whereLabel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<bool> get anonymous =>
+      $composableBuilder(column: $table.anonymous, builder: (column) => column);
+
+  GeneratedColumn<String> get statusCode => $composableBuilder(
+    column: $table.statusCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ReportsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ReportsTable,
+          ReportRow,
+          $$ReportsTableFilterComposer,
+          $$ReportsTableOrderingComposer,
+          $$ReportsTableAnnotationComposer,
+          $$ReportsTableCreateCompanionBuilder,
+          $$ReportsTableUpdateCompanionBuilder,
+          (ReportRow, BaseReferences<_$AppDatabase, $ReportsTable, ReportRow>),
+          ReportRow,
+          PrefetchHooks Function()
+        > {
+  $$ReportsTableTableManager(_$AppDatabase db, $ReportsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReportsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReportsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReportsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> receiptNo = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String> gradeBand = const Value.absent(),
+                Value<String> typesJson = const Value.absent(),
+                Value<String> whenLabel = const Value.absent(),
+                Value<String> whereLabel = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<bool> anonymous = const Value.absent(),
+                Value<String> statusCode = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => ReportsCompanion(
+                id: id,
+                receiptNo: receiptNo,
+                role: role,
+                gradeBand: gradeBand,
+                typesJson: typesJson,
+                whenLabel: whenLabel,
+                whereLabel: whereLabel,
+                body: body,
+                anonymous: anonymous,
+                statusCode: statusCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String receiptNo,
+                required String role,
+                required String gradeBand,
+                Value<String> typesJson = const Value.absent(),
+                required String whenLabel,
+                required String whereLabel,
+                Value<String> body = const Value.absent(),
+                Value<bool> anonymous = const Value.absent(),
+                Value<String> statusCode = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => ReportsCompanion.insert(
+                id: id,
+                receiptNo: receiptNo,
+                role: role,
+                gradeBand: gradeBand,
+                typesJson: typesJson,
+                whenLabel: whenLabel,
+                whereLabel: whereLabel,
+                body: body,
+                anonymous: anonymous,
+                statusCode: statusCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ReportsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ReportsTable,
+      ReportRow,
+      $$ReportsTableFilterComposer,
+      $$ReportsTableOrderingComposer,
+      $$ReportsTableAnnotationComposer,
+      $$ReportsTableCreateCompanionBuilder,
+      $$ReportsTableUpdateCompanionBuilder,
+      (ReportRow, BaseReferences<_$AppDatabase, $ReportsTable, ReportRow>),
+      ReportRow,
+      PrefetchHooks Function()
+    >;
+typedef $$InboxItemsTableCreateCompanionBuilder =
+    InboxItemsCompanion Function({
+      Value<int> id,
+      required String kind,
+      required String title,
+      Value<String> detail,
+      Value<String?> receiptNo,
+      Value<bool> isRead,
+      Value<DateTime> createdAt,
+    });
+typedef $$InboxItemsTableUpdateCompanionBuilder =
+    InboxItemsCompanion Function({
+      Value<int> id,
+      Value<String> kind,
+      Value<String> title,
+      Value<String> detail,
+      Value<String?> receiptNo,
+      Value<bool> isRead,
+      Value<DateTime> createdAt,
+    });
+
+class $$InboxItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $InboxItemsTable> {
+  $$InboxItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get detail => $composableBuilder(
+    column: $table.detail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptNo => $composableBuilder(
+    column: $table.receiptNo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isRead => $composableBuilder(
+    column: $table.isRead,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$InboxItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $InboxItemsTable> {
+  $$InboxItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get detail => $composableBuilder(
+    column: $table.detail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptNo => $composableBuilder(
+    column: $table.receiptNo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isRead => $composableBuilder(
+    column: $table.isRead,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$InboxItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InboxItemsTable> {
+  $$InboxItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get detail =>
+      $composableBuilder(column: $table.detail, builder: (column) => column);
+
+  GeneratedColumn<String> get receiptNo =>
+      $composableBuilder(column: $table.receiptNo, builder: (column) => column);
+
+  GeneratedColumn<bool> get isRead =>
+      $composableBuilder(column: $table.isRead, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$InboxItemsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $InboxItemsTable,
+          InboxRow,
+          $$InboxItemsTableFilterComposer,
+          $$InboxItemsTableOrderingComposer,
+          $$InboxItemsTableAnnotationComposer,
+          $$InboxItemsTableCreateCompanionBuilder,
+          $$InboxItemsTableUpdateCompanionBuilder,
+          (InboxRow, BaseReferences<_$AppDatabase, $InboxItemsTable, InboxRow>),
+          InboxRow,
+          PrefetchHooks Function()
+        > {
+  $$InboxItemsTableTableManager(_$AppDatabase db, $InboxItemsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InboxItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InboxItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$InboxItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> detail = const Value.absent(),
+                Value<String?> receiptNo = const Value.absent(),
+                Value<bool> isRead = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => InboxItemsCompanion(
+                id: id,
+                kind: kind,
+                title: title,
+                detail: detail,
+                receiptNo: receiptNo,
+                isRead: isRead,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String kind,
+                required String title,
+                Value<String> detail = const Value.absent(),
+                Value<String?> receiptNo = const Value.absent(),
+                Value<bool> isRead = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => InboxItemsCompanion.insert(
+                id: id,
+                kind: kind,
+                title: title,
+                detail: detail,
+                receiptNo: receiptNo,
+                isRead: isRead,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$InboxItemsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $InboxItemsTable,
+      InboxRow,
+      $$InboxItemsTableFilterComposer,
+      $$InboxItemsTableOrderingComposer,
+      $$InboxItemsTableAnnotationComposer,
+      $$InboxItemsTableCreateCompanionBuilder,
+      $$InboxItemsTableUpdateCompanionBuilder,
+      (InboxRow, BaseReferences<_$AppDatabase, $InboxItemsTable, InboxRow>),
+      InboxRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1661,4 +3343,8 @@ class $AppDatabaseManager {
       $$ConversationsTableTableManager(_db, _db.conversations);
   $$MessagesTableTableManager get messages =>
       $$MessagesTableTableManager(_db, _db.messages);
+  $$ReportsTableTableManager get reports =>
+      $$ReportsTableTableManager(_db, _db.reports);
+  $$InboxItemsTableTableManager get inboxItems =>
+      $$InboxItemsTableTableManager(_db, _db.inboxItems);
 }

@@ -15,6 +15,18 @@ class HomeScreen extends StatelessWidget {
 
   static const _gridItems = <_HomeMenuItem>[
     _HomeMenuItem(
+      label: '신고하기',
+      subtitle: '익명으로 안전하게',
+      path: AppRoutes.report,
+      icon: Icons.flag_outlined,
+    ),
+    _HomeMenuItem(
+      label: '진행 상황',
+      subtitle: '접수 번호로 조회',
+      path: AppRoutes.statusLookup,
+      icon: Icons.timeline,
+    ),
+    _HomeMenuItem(
       label: '법령 조문 찾기',
       subtitle: '학교폭력예방법 · 시행령',
       path: AppRoutes.laws,
@@ -22,13 +34,13 @@ class HomeScreen extends StatelessWidget {
     ),
     _HomeMenuItem(
       label: '절차 흐름도',
-      subtitle: '신고부터 심의까지 한눈에',
+      subtitle: '신고부터 심의까지',
       path: AppRoutes.flow,
       icon: Icons.account_tree_outlined,
     ),
     _HomeMenuItem(
       label: '자주 묻는 질문',
-      subtitle: '학생·학부모가 가장 많이 묻는 것',
+      subtitle: '학생·학부모가 묻는 것',
       path: AppRoutes.faq,
       icon: Icons.help_outline,
     ),
@@ -121,26 +133,41 @@ class _MiniHeader extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          Material(
-            color: AppTokens.lCard,
-            shape: const CircleBorder(),
-            elevation: 1.5,
-            shadowColor: Colors.black12,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () => context.push(AppRoutes.settings),
-              child: const SizedBox(
-                width: 34,
-                height: 34,
-                child: Icon(
-                  Icons.settings_outlined,
-                  size: 18,
-                  color: AppTokens.lSub,
-                ),
-              ),
-            ),
+          _HeaderCircleBtn(
+            icon: Icons.notifications_none,
+            onTap: () => context.push(AppRoutes.notifications),
+          ),
+          const SizedBox(width: 8),
+          _HeaderCircleBtn(
+            icon: Icons.settings_outlined,
+            onTap: () => context.push(AppRoutes.settings),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeaderCircleBtn extends StatelessWidget {
+  const _HeaderCircleBtn({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppTokens.lCard,
+      shape: const CircleBorder(),
+      elevation: 1.5,
+      shadowColor: Colors.black12,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: SizedBox(
+          width: 34,
+          height: 34,
+          child: Icon(icon, size: 18, color: AppTokens.lSub),
+        ),
       ),
     );
   }

@@ -9,13 +9,18 @@ import '../../features/faq/presentation/faq_screen.dart';
 import '../../features/flowchart/presentation/procedure_flow_screen.dart';
 import '../../features/home/presentation/role_home_router.dart';
 import '../../features/laws/presentation/law_search_screen.dart';
+import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/application/disclaimer_notifier.dart';
 import '../../features/onboarding/presentation/disclaimer_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/purchase/presentation/purchase_screen.dart';
+import '../../features/report/presentation/report_done_screen.dart';
+import '../../features/report/presentation/report_form_screen.dart';
 import '../../features/role/application/user_role_notifier.dart';
 import '../../features/role/presentation/role_picker_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/status/presentation/status_detail_screen.dart';
+import '../../features/status/presentation/status_lookup_screen.dart';
 
 /// 라우트 경로 상수. 화면 추가 시 이 곳에서 한 곳만 수정.
 class AppRoutes {
@@ -32,6 +37,10 @@ class AppRoutes {
   static const rolePicker = '/onboarding/role';
   static const history = '/chat/history';
   static const purchase = '/purchase';
+  static const report = '/report';
+  static const reportDone = '/report/done';
+  static const statusLookup = '/status';
+  static const notifications = '/notifications';
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -113,6 +122,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.settings,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.report,
+        builder: (context, state) => const ReportFormScreen(),
+        routes: [
+          GoRoute(
+            path: 'done',
+            builder: (context, state) {
+              final receipt = state.uri.queryParameters['receipt'] ?? '';
+              return ReportDoneScreen(receiptNo: receipt);
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.statusLookup,
+        builder: (context, state) => const StatusLookupScreen(),
+        routes: [
+          GoRoute(
+            path: ':receiptNo',
+            builder: (context, state) {
+              final r = state.pathParameters['receiptNo'] ?? '';
+              return StatusDetailScreen(receiptNo: r);
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
         path: AppRoutes.debugHealth,

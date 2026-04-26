@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 import 'case_detail_screen.dart';
 
@@ -121,19 +123,49 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppTokens.lCard,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: AppTokens.lLine),
+          Material(
+            color: AppTokens.lCard,
+            shape: const CircleBorder(),
+            elevation: 1.5,
+            shadowColor: Colors.black12,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => context.push(AppRoutes.notifications),
+              child: const SizedBox(
+                width: 36,
+                height: 36,
+                child: Icon(
+                  Icons.notifications_none,
+                  size: 18,
+                  color: AppTokens.lInk,
+                ),
+              ),
             ),
-            child: const Text(
-              '+ 새 사안',
-              style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: AppTokens.lPrimary,
+          ),
+          const SizedBox(width: 8),
+          Material(
+            color: AppTokens.lCard,
+            borderRadius: BorderRadius.circular(999),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () => context.push(AppRoutes.report),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: AppTokens.lLine),
+                ),
+                child: const Text(
+                  '+ 새 사안',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppTokens.lPrimary,
+                  ),
+                ),
               ),
             ),
           ),
