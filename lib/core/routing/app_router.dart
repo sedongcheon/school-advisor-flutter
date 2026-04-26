@@ -12,6 +12,7 @@ import '../../features/laws/presentation/law_search_screen.dart';
 import '../../features/onboarding/application/disclaimer_notifier.dart';
 import '../../features/onboarding/presentation/disclaimer_screen.dart';
 import '../../features/onboarding/presentation/intro_pages_screen.dart';
+import '../../features/purchase/presentation/purchase_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 
 /// 라우트 경로 상수. 화면 추가 시 이 곳에서 한 곳만 수정.
@@ -27,6 +28,7 @@ class AppRoutes {
   static const disclaimer = '/onboarding/disclaimer';
   static const intro = '/onboarding/intro';
   static const history = '/chat/history';
+  static const purchase = '/purchase';
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -68,6 +70,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.history,
         builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.purchase,
+        builder: (context, state) => const PurchaseScreen(),
       ),
       GoRoute(
         path: AppRoutes.laws,

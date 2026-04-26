@@ -50,6 +50,9 @@ dependencies:
   drift: ^2.21.0
   drift_flutter: ^0.2.4
 
+  # 인앱결제 (Play Billing)
+  in_app_purchase: ^3.2.0
+
   # FCM 푸시
   firebase_core: ^3.6.0
   firebase_messaging: ^15.1.3

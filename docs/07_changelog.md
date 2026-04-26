@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-04-26 — 인앱결제 클라이언트 (앱 담당 6)
+
+- `in_app_purchase: ^3.2.0` 패키지 도입
+- `features/purchase/data/`:
+  - `purchase_product.dart` — 카탈로그(`advisor_7day` / `advisor_30day` / `advisor_teacher`) + planCode 매핑
+  - `purchase_repository.dart` — `POST /api/v1/purchase/verify` 호출 + sealed 에러(`PurchaseTokenInvalid` / `PurchaseTokenAlreadyUsed` / `PurchaseProviderError` / `PurchaseUnknownError`)
+- `features/purchase/application/purchase_notifier.dart` — `InAppPurchase` 가용성 체크 + `queryProductDetails` + `purchaseStream` 구독 + 검증 + `completePurchase`
+- `features/purchase/presentation/purchase_screen.dart` — Mint Sage 톤 헤더 + 3개 플랜 카드 + Play 가격 표시(상품 미등록 시 "곧 출시 예정") + 결제 진행 중 로딩 + 성공/실패 스낵바
+- 라우트 `/purchase` 추가
+- `usage_indicator` 가 칩 → `/purchase` 로 진입점 제공
+- 검증 성공 시 `userStatusProvider.refresh()` fire-and-forget 으로 사용량 즉시 반영
+
 ## 2026-04-26 — 멀티턴 다이얼로그 + 7일 컷오프 (앱 담당 4·5)
 
 - `LastSessionMeta` (freezed) — `GET /api/v1/chat/last_session` 응답 (`session_id`, `last_message_at`, `last_user_query`, `days_ago`)

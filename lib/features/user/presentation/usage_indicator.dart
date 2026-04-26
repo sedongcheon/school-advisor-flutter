@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/routing/app_router.dart';
 import '../data/user_repository.dart';
 import '../data/user_status_dto.dart';
 
 /// 채팅 화면 AppBar 액션 자리에 표시되는 사용량 칩.
-/// `남은 N/M` + 임박 시 색상 변경.
+/// `남은 N/M` + 임박 시 색상 변경 + 탭 시 결제 화면 이동.
 class UsageIndicator extends ConsumerWidget {
   const UsageIndicator({super.key});
 
@@ -45,26 +47,30 @@ class _Chip extends StatelessWidget {
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.bolt, size: 14, color: color),
-            const SizedBox(width: 4),
-            Text(
-              '${status.questionsRemaining}/${status.questionsLimit}',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.purchase),
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.bolt, size: 14, color: color),
+              const SizedBox(width: 4),
+              Text(
+                '${status.questionsRemaining}/${status.questionsLimit}',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
