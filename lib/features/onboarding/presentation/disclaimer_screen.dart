@@ -78,7 +78,7 @@ class _DisclaimerScreenState extends ConsumerState<DisclaimerScreen> {
                             .read(disclaimerAcceptedProvider.notifier)
                             .accept();
                         if (!context.mounted) return;
-                        context.go(AppRoutes.intro);
+                        context.go(AppRoutes.onboarding);
                       }
                     : null,
                 child: const Text('동의하고 시작하기'),
