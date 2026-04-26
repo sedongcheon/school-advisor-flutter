@@ -283,13 +283,26 @@ class _HeroChip extends StatelessWidget {
   const _HeroChip({required this.label});
   final String label;
 
+  /// 칩별 prefill 메시지 매핑.
+  static String _promptFor(String chipLabel) => switch (chipLabel) {
+    '신고 절차' => '학교폭력 신고 절차를 단계별로 알려주세요.',
+    '심의가 궁금해요' => '학교폭력대책심의위원회는 어떻게 진행되나요?',
+    '보호조치' => '피해학생 보호조치는 어떤 것들이 있나요?',
+    _ => chipLabel,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppTokens.lChipBg,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
-        onTap: () => context.push(AppRoutes.chat),
+        onTap: () {
+          final prompt = _promptFor(label);
+          context.push(
+            '${AppRoutes.chat}?prefill=${Uri.encodeQueryComponent(prompt)}',
+          );
+        },
         borderRadius: BorderRadius.circular(999),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),

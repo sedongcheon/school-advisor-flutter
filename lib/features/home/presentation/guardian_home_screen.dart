@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/db/app_database.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
+import '../../report/data/reports_repository.dart';
 
-/// 보호자 모드 홈 — 자녀 진행 카드 + 보호자 메뉴 + 117 배너.
-/// 자녀/사안 정보는 현재 mock. Stage 3 의 백엔드/SQLite 통합 후 실데이터로 교체.
-class GuardianHomeScreen extends StatelessWidget {
+/// 보호자 모드 홈 — 자녀 진행 카드(LIVE) + 보호자 메뉴 + 117 배너.
+class GuardianHomeScreen extends ConsumerWidget {
   const GuardianHomeScreen({super.key});
 
   static const _menus = <_GuardianMenu>[
@@ -29,14 +31,15 @@ class GuardianHomeScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final latest = ref.watch(latestReportProvider);
     return Scaffold(
       backgroundColor: AppTokens.lBg,
       body: SafeArea(
         child: Column(
           children: [
             const _Header(),
-            const _ChildProgressCard(),
+            _ChildProgressCard(report: latest),
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
               child: Align(
@@ -127,118 +130,189 @@ class _Header extends StatelessWidget {
 }
 
 class _ChildProgressCard extends StatelessWidget {
-  const _ChildProgressCard();
+  const _ChildProgressCard({required this.report});
+  final ReportRow? report;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppTokens.lHeroTop, AppTokens.lHeroBottom],
+    if (report == null) {
+      return _EmptyChildCard();
+    }
+    return GestureDetector(
+      onTap: () =>
+          context.push('${AppRoutes.statusLookup}/${report!.receiptNo}'),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppTokens.lHeroTop, AppTokens.lHeroBottom],
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '진행 중인 사안',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: AppTokens.lPrimaryDeep,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: AppTokens.lCard,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    report!.receiptNo.split('-').last.substring(0, 2),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: AppTokens.lPrimaryDeep,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${report!.role} · ${report!.gradeBand}학생',
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w800,
+                          color: AppTokens.lInk,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${report!.receiptNo} · '
+                        '${ReportsRepository.statusLabel(report!.statusCode)}',
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          color: AppTokens.lPrimaryDeep,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: List.generate(4, (i) {
+                final stage = ReportsRepository.stageIndex(report!.statusCode);
+                return Expanded(
+                  child: Container(
+                    height: 5,
+                    margin: EdgeInsets.only(right: i == 3 ? 0 : 4),
+                    decoration: BoxDecoration(
+                      color: i <= stage
+                          ? AppTokens.lPrimary
+                          : const Color(0x383F7C6A),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 6),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '접수',
+                  style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
+                ),
+                Text(
+                  '조사',
+                  style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
+                ),
+                Text(
+                  '심의',
+                  style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
+                ),
+                Text(
+                  '조치',
+                  style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '자녀 진행 상황',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: AppTokens.lPrimaryDeep,
+    );
+  }
+}
+
+class _EmptyChildCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.push(AppRoutes.report),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: AppTokens.lCard,
+          border: Border.all(color: AppTokens.lLine),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTokens.lTileTint,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.flag_outlined,
+                size: 20,
+                color: AppTokens.lPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: AppTokens.lCard,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  '민',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: AppTokens.lPrimaryDeep,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '김민수 · 중2',
-                      style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w800,
-                        color: AppTokens.lInk,
-                      ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '아직 진행 중인 사안이 없어요',
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppTokens.lInk,
                     ),
-                    SizedBox(height: 2),
-                    Text(
-                      'R-2026-0428-1147 · 사안 조사 중',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: AppTokens.lPrimaryDeep,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: List.generate(4, (i) {
-              return Expanded(
-                child: Container(
-                  height: 5,
-                  margin: EdgeInsets.only(right: i == 3 ? 0 : 4),
-                  decoration: BoxDecoration(
-                    color: i <= 1
-                        ? AppTokens.lPrimary
-                        : const Color(0x383F7C6A),
-                    borderRadius: BorderRadius.circular(999),
                   ),
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 6),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '접수',
-                style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
+                  SizedBox(height: 2),
+                  Text(
+                    '신고하기로 시작해 보세요.',
+                    style: TextStyle(fontSize: 11.5, color: AppTokens.lSub),
+                  ),
+                ],
               ),
-              Text(
-                '조사',
-                style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
-              ),
-              Text(
-                '심의',
-                style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
-              ),
-              Text(
-                '조치',
-                style: TextStyle(fontSize: 10, color: AppTokens.lPrimaryDeep),
-              ),
-            ],
-          ),
-        ],
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 12,
+              color: AppTokens.lSub,
+            ),
+          ],
+        ),
       ),
     );
   }

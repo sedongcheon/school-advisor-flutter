@@ -97,7 +97,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.chat,
-        builder: (context, state) => const ChatScreen(),
+        builder: (context, state) {
+          final prefill = state.uri.queryParameters['prefill'];
+          return ChatScreen(prefill: prefill);
+        },
       ),
       GoRoute(
         path: AppRoutes.history,

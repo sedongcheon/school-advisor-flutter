@@ -20,7 +20,10 @@ import 'widgets/message_bubble.dart';
 import 'widgets/stale_session_dialog.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({this.prefill, super.key});
+
+  /// 홈의 추천 칩 등에서 진입할 때 자동 송신할 메시지.
+  final String? prefill;
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -28,13 +31,14 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _scrollController = ScrollController();
+  bool _prefillSent = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      ref
+      await ref
           .read(chatNotifierProvider.notifier)
           .maybeAutoResume(
             onPromptStale: (meta) async {
@@ -43,6 +47,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               return choice == StaleSessionChoice.resume;
             },
           );
+      if (!mounted) return;
+      final p = widget.prefill;
+      if (!_prefillSent && p != null && p.trim().isNotEmpty) {
+        _prefillSent = true;
+        await _handleSubmit(p);
+      }
     });
   }
 

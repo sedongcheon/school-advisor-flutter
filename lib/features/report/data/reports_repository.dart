@@ -71,7 +71,70 @@ class ReportsRepository {
         if (s is String) s,
     ];
   }
+
+  /// `statusCode` → 4단계 진행 인덱스(0~3).
+  static int stageIndex(String statusCode) => switch (statusCode) {
+    'received' => 0,
+    'investigating' => 1,
+    'review' => 2,
+    'concluded' => 3,
+    _ => 0,
+  };
+
+  static String statusLabel(String code) => switch (code) {
+    'received' => '접수 완료',
+    'investigating' => '사안 조사 중',
+    'review' => '심의 진행',
+    'concluded' => '조치 완료',
+    _ => '진행 중',
+  };
 }
+
+/// 교사 홈 KPI 요약.
+class ReportsKpi {
+  const ReportsKpi({
+    required this.inProgress,
+    required this.reviewSoon,
+    required this.total,
+  });
+  final int inProgress;
+  final int reviewSoon;
+  final int total;
+}
+
+/// reports 전체 watch.
+final reportsAllProvider = StreamProvider<List<ReportRow>>((ref) {
+  return ref.watch(reportsRepositoryProvider).watchAll();
+});
+
+/// 가장 최근 1건 (보호자 홈 자녀 카드용).
+final latestReportProvider = Provider<ReportRow?>((ref) {
+  final state = ref.watch(reportsAllProvider);
+  return state.maybeWhen(
+    data: (list) => list.isEmpty ? null : list.first,
+    orElse: () => null,
+  );
+});
+
+/// 교사 홈 KPI.
+final reportsKpiProvider = Provider<ReportsKpi>((ref) {
+  final state = ref.watch(reportsAllProvider);
+  final list = state.value ?? const <ReportRow>[];
+  final inProgress = list
+      .where(
+        (r) =>
+            r.statusCode == 'received' ||
+            r.statusCode == 'investigating' ||
+            r.statusCode == 'review',
+      )
+      .length;
+  final reviewSoon = list.where((r) => r.statusCode == 'review').length;
+  return ReportsKpi(
+    inProgress: inProgress,
+    reviewSoon: reviewSoon,
+    total: list.length,
+  );
+});
 
 final reportsRepositoryProvider = Provider<ReportsRepository>((ref) {
   return ReportsRepository(ref.watch(appDatabaseProvider));

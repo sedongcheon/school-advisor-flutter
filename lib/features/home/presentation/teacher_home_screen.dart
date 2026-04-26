@@ -1,54 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/db/app_database.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
+import '../../report/data/reports_repository.dart';
 import 'case_detail_screen.dart';
 
-/// 교사·전담기구 홈 — KPI / 최근 사안 / 빠른 도구.
-/// 모든 데이터는 mock. Stage 3 에서 SQLite 또는 백엔드와 연결.
-class TeacherHomeScreen extends StatelessWidget {
+/// 교사·전담기구 홈 — KPI / 최근 사안 (모두 reports LIVE) / 빠른 도구.
+class TeacherHomeScreen extends ConsumerWidget {
   const TeacherHomeScreen({super.key});
 
-  static const _kpis = <_Kpi>[
-    _Kpi(value: '12', label: '진행 중', sub: '+2 today'),
-    _Kpi(value: '3', label: '심의 임박', sub: '7일 이내'),
-    _Kpi(value: '5', label: '내 담당', sub: '미열람 1'),
-  ];
-  static const _cases = <_Case>[
-    _Case(
-      name: '김ㅇㅇ',
-      grade: '2-3',
-      status: '사안 조사',
-      statusColor: AppTokens.lAccent,
-      meta: 'D+6 · 마감 D-2',
-    ),
-    _Case(
-      name: '이ㅇㅇ',
-      grade: '1-5',
-      status: '접수',
-      statusColor: AppTokens.lPrimary,
-      meta: '오늘 09:14',
-    ),
-    _Case(
-      name: '박ㅇㅇ',
-      grade: '3-1',
-      status: '심의 예정',
-      statusColor: Color(0xFF7A5A2E),
-      meta: '5/8 14:00',
-    ),
-  ];
   static const _quick = ['양식 다운로드', '심의 일정표', '법령 검색'];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reports = ref.watch(reportsAllProvider).value ?? const <ReportRow>[];
+    final kpi = ref.watch(reportsKpiProvider);
     return Scaffold(
       backgroundColor: AppTokens.lBg,
       body: SafeArea(
         child: Column(
           children: [
             const _Header(),
-            const _KpiRow(kpis: _kpis),
+            _KpiRow(kpi: kpi),
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 16, 20, 6),
               child: Row(
@@ -75,10 +51,14 @@ class TeacherHomeScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                children: [for (final c in _cases) _CaseCard(c: c)],
-              ),
+              child: reports.isEmpty
+                  ? const _EmptyCases()
+                  : ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      children: [
+                        for (final r in reports.take(8)) _CaseCard(report: r),
+                      ],
+                    ),
             ),
             const _QuickTools(items: _quick),
           ],
@@ -175,27 +155,25 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _Kpi {
-  const _Kpi({required this.value, required this.label, required this.sub});
-  final String value;
-  final String label;
-  final String sub;
-}
-
 class _KpiRow extends StatelessWidget {
-  const _KpiRow({required this.kpis});
-  final List<_Kpi> kpis;
+  const _KpiRow({required this.kpi});
+  final ReportsKpi kpi;
 
   @override
   Widget build(BuildContext context) {
+    final items = <(String, String, String)>[
+      (kpi.inProgress.toString(), '진행 중', '오늘 기준'),
+      (kpi.reviewSoon.toString(), '심의 임박', '7일 이내'),
+      (kpi.total.toString(), '전체', '누적'),
+    ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
       child: Row(
         children: [
-          for (var i = 0; i < kpis.length; i++)
+          for (var i = 0; i < items.length; i++)
             Expanded(
               child: Container(
-                margin: EdgeInsets.only(right: i == kpis.length - 1 ? 0 : 8),
+                margin: EdgeInsets.only(right: i == items.length - 1 ? 0 : 8),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 12,
@@ -209,7 +187,7 @@ class _KpiRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      kpis[i].value,
+                      items[i].$1,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
@@ -219,7 +197,7 @@ class _KpiRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      kpis[i].label,
+                      items[i].$2,
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
@@ -228,7 +206,7 @@ class _KpiRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      kpis[i].sub,
+                      items[i].$3,
                       style: const TextStyle(
                         fontSize: 10.5,
                         color: AppTokens.lSub,
@@ -244,32 +222,33 @@ class _KpiRow extends StatelessWidget {
   }
 }
 
-class _Case {
-  const _Case({
-    required this.name,
-    required this.grade,
-    required this.status,
-    required this.statusColor,
-    required this.meta,
-  });
-  final String name;
-  final String grade;
-  final String status;
-  final Color statusColor;
-  final String meta;
-}
-
 class _CaseCard extends StatelessWidget {
-  const _CaseCard({required this.c});
-  final _Case c;
+  const _CaseCard({required this.report});
+  final ReportRow report;
 
   @override
   Widget build(BuildContext context) {
+    final tail = report.receiptNo.split('-').last;
+    final created = report.createdAt;
+    final mm = created.month.toString().padLeft(2, '0');
+    final dd = created.day.toString().padLeft(2, '0');
+    final hh = created.hour.toString().padLeft(2, '0');
+    final mi = created.minute.toString().padLeft(2, '0');
+    final meta = '$mm/$dd $hh:$mi · ${report.role}';
+
+    final statusColor = switch (report.statusCode) {
+      'received' => AppTokens.lPrimary,
+      'investigating' => AppTokens.lAccent,
+      'review' => const Color(0xFF7A5A2E),
+      'concluded' => AppTokens.lSub,
+      _ => AppTokens.lPrimary,
+    };
+
     return GestureDetector(
       onTap: () => Navigator.push<void>(
         context,
         MaterialPageRoute<void>(
-          builder: (_) => CaseDetailScreen(name: c.name, grade: c.grade),
+          builder: (_) => CaseDetailScreen(receiptNo: report.receiptNo),
         ),
       ),
       child: Container(
@@ -291,9 +270,9 @@ class _CaseCard extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                c.name[0],
+                tail.substring(0, 2),
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w800,
                   color: AppTokens.lPrimaryDeep,
                 ),
@@ -307,7 +286,7 @@ class _CaseCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        c.name,
+                        '#$tail',
                         style: const TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
@@ -316,7 +295,7 @@ class _CaseCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '· ${c.grade}',
+                        '· ${report.gradeBand}',
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppTokens.lSub,
@@ -333,11 +312,11 @@ class _CaseCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          c.status,
+                          ReportsRepository.statusLabel(report.statusCode),
                           style: TextStyle(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
-                            color: c.statusColor,
+                            color: statusColor,
                           ),
                         ),
                       ),
@@ -345,7 +324,7 @@ class _CaseCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    c.meta,
+                    meta,
                     style: const TextStyle(
                       fontSize: 11.5,
                       color: AppTokens.lSub,
@@ -353,6 +332,40 @@ class _CaseCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyCases extends StatelessWidget {
+  const _EmptyCases();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.folder_open_outlined,
+              size: 56,
+              color: AppTokens.lSub,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              '아직 접수된 사안이 없어요.',
+              style: TextStyle(fontSize: 13.5, color: AppTokens.lInk),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '신고가 들어오면 여기에 나타납니다.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11.5, color: AppTokens.lSub),
             ),
           ],
         ),
