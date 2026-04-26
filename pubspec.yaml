@@ -1,0 +1,108 @@
+name: school_advisor
+description: "학폭위 자문 모바일 앱 (Flutter 클라이언트)"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.4
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # 상태관리
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # 라우팅
+  go_router: ^14.2.7
+
+  # 네트워크
+  dio: ^5.7.0
+
+  # 저장소
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.3.2
+
+  # 유틸
+  uuid: ^4.5.1
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # 마크다운 렌더링 (답변 본문)
+  flutter_markdown_plus: ^1.0.3
+
+  # 외부 앱 (전화/브라우저)
+  url_launcher: ^6.3.1
+
+  # 한국어 폰트 (Noto Sans KR — Pretendard 미등재로 임시 채택)
+  google_fonts: ^6.2.1
+
+  # 앱 버전·빌드 정보
+  package_info_plus: ^8.1.0
+
+  # 관측
+  sentry_flutter: ^9.6.0
+
+  # 로컬 DB (대화 이력)
+  drift: ^2.21.0
+  drift_flutter: ^0.2.4
+
+  # FCM 푸시
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+  flutter_local_notifications: ^18.0.1
+  permission_handler: ^11.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # 린트
+  very_good_analysis: ^6.0.0
+
+  # 코드 생성
+  build_runner: ^2.4.13
+  freezed: ^3.2.3
+  json_serializable: ^6.8.0
+  drift_dev: ^2.21.0
+
+  # 테스트 mock
+  mocktail: ^1.0.4
+
+  # 앱 아이콘 / 스플래시 자동 생성
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/laws/
+    - assets/faq/
+    - assets/branding/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  # 사용자 제공 아이콘 자산
+  image_path_ios: "assets/branding/icon.png"
+  image_path_android: "assets/branding/icon.png"
+  adaptive_icon_background: "assets/branding/android-adaptive-bg.png"
+  adaptive_icon_foreground: "assets/branding/android-adaptive-fg.png"
+  min_sdk_android: 21
+
+flutter_native_splash:
+  color: "#F6F8F2"
+  color_dark: "#0F1A11"
+  image: "assets/branding/splash.png"
+  image_dark: "assets/branding/splash.png"
+  android_12:
+    image: "assets/branding/splash.png"
+    color: "#F6F8F2"
+    image_dark: "assets/branding/splash.png"
+    color_dark: "#0F1A11"
+  android: true
+  ios: true

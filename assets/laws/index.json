@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "law_name": "학교폭력예방 및 대책에 관한 법률",
+      "short_name": "학폭예방법",
+      "doc_type": "법률",
+      "articles": [
+        { "article_no": "제1조", "title": "목적" },
+        { "article_no": "제2조", "title": "정의" },
+        { "article_no": "제11조", "title": "교육감의 임무" },
+        { "article_no": "제11조의2", "title": "학교폭력 조사·상담 등" },
+        { "article_no": "제12조", "title": "학교폭력대책심의위원회의 설치·기능" },
+        { "article_no": "제13조", "title": "심의위원회의 구성·운영" },
+        { "article_no": "제13조의2", "title": "학교의 장의 자체해결" },
+        { "article_no": "제14조", "title": "전담기구의 구성 등" },
+        { "article_no": "제16조", "title": "피해학생의 보호" },
+        { "article_no": "제16조의2", "title": "장애학생의 보호" },
+        { "article_no": "제17조", "title": "가해학생에 대한 조치" },
+        { "article_no": "제17조의2", "title": "행정심판" },
+        { "article_no": "제18조", "title": "분쟁조정" },
+        { "article_no": "제19조", "title": "학교의 장의 의무 등" },
+        { "article_no": "제20조", "title": "학교폭력의 신고의무" },
+        { "article_no": "제21조", "title": "비밀누설금지 등" },
+        { "article_no": "제22조", "title": "벌칙" }
+      ]
+    },
+    {
+      "law_name": "학교폭력예방 및 대책에 관한 법률 시행령",
+      "short_name": "학폭예방법 시행령",
+      "doc_type": "대통령령",
+      "articles": [
+        { "article_no": "제14조", "title": "심의위원회의 구성" },
+        { "article_no": "제14조의2", "title": "학교의 장의 자체해결" },
+        { "article_no": "제16조", "title": "전담기구 운영 등" },
+        { "article_no": "제18조", "title": "피해학생의 지원 범위 등" },
+        { "article_no": "제19조", "title": "가해학생에 대한 조치별 적용 기준" },
+        { "article_no": "제20조", "title": "출석정지" },
+        { "article_no": "제22조", "title": "분쟁조정 신청 등" }
+      ]
+    },
+    {
+      "law_name": "학교폭력예방 및 대책에 관한 법률 시행규칙",
+      "short_name": "학폭예방법 시행규칙",
+      "doc_type": "교육부령",
+      "articles": [
+        { "article_no": "제2조", "title": "전담기구 운영" },
+        { "article_no": "제3조", "title": "심의위원회 회의록 작성·관리" }
+      ]
+    }
+  ]
+}
