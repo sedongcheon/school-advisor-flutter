@@ -15,6 +15,48 @@ class CaseDetailScreen extends ConsumerWidget {
   const CaseDetailScreen({required this.receiptNo, super.key});
   final String receiptNo;
 
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    ReportRow row,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('사안을 삭제할까요?'),
+        content: Text(
+          '${row.receiptNo} 의 모든 정보가 기기에서 사라집니다.\n'
+          '되돌릴 수 없습니다.',
+          style: const TextStyle(fontSize: 13.5, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('취소'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final removed = await ref
+        .read(reportsRepositoryProvider)
+        .deleteByReceiptNo(row.receiptNo);
+    if (!context.mounted) return;
+    if (removed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('사안이 삭제되었어요.')),
+      );
+      await Navigator.of(context).maybePop();
+    }
+  }
+
   Future<void> _advance(
     BuildContext context,
     WidgetRef ref,
@@ -102,11 +144,34 @@ class CaseDetailScreen extends ConsumerWidget {
           ),
         ),
         centerTitle: true,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.more_horiz, color: AppTokens.lInk),
-          ),
+        actions: [
+          if (isTeacher)
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_horiz, color: AppTokens.lInk),
+              onSelected: (key) async {
+                final r = report;
+                if (key == 'delete' && r != null) {
+                  await _confirmDelete(context, ref, r);
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                      SizedBox(width: 10),
+                      Text('사안 삭제'),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: Icon(Icons.more_horiz, color: AppTokens.lInk),
+            ),
         ],
       ),
       body: SafeArea(

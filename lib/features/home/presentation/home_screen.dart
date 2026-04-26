@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/db/app_database.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
+import '../../../shared/widgets/inbox_preview.dart';
 import '../../report/data/reports_repository.dart';
 
 /// 학폭 나침반 홈 — 새 디자인 가이드(`flutter_export/home_screen.dart`) 기반.
@@ -83,6 +84,7 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 4),
                     _HeroCard(chips: _heroChips),
+                    const InboxPreview(),
                     const _SectionLabel('다른 도구'),
                     _Grid2x2(items: gridItems),
                     const SizedBox(height: 16),
