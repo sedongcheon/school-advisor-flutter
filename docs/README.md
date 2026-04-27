@@ -1,66 +1,64 @@
-# 학폭 자문 앱 — Flutter 프론트엔드 프롬프트 세트
+# 학폭 나침반 — 문서 인덱스
 
-학폭위 자문 앱(`school-advisor`)의 **Flutter 클라이언트**를 자작하기 위한 프롬프트·가이드 모음.
-백엔드(FastAPI + RAG, AWS 서울 배포)는 이미 완료되어 운영 중이며, 이 문서들은 그 백엔드를 **소비하는 모바일 앱**을 만드는 데 집중한다.
+> 학폭위 자문 Flutter 클라이언트 (`school-advisor-flutter`) 의 문서 모음.
+> 백엔드(`school-advisor`, FastAPI + RAG, AWS 서울)는 별도 레포에서 운영 중이며, 본 문서들은 **클라이언트 관점**에서 정리됩니다.
 
 ---
 
-## 📂 파일 구성
+## 📂 문서 구성
 
-| 파일 | 용도 | 사용 시점 |
+| 파일 | 용도 | 상태 |
 |---|---|---|
-| `01_claude_code_dev_prompt.md` | **개발 지시 프롬프트** — Flutter 코드를 Claude Code에게 맡길 때 사용 | 프로젝트 루트 `CLAUDE.md`로 복사 후 `claude` 실행 |
-| `02_api_integration_spec.md` | **API 연동 명세** — 백엔드 엔드포인트·SSE 프레임·에러 코드·DTO | Repository / Service 레이어 구현 시 |
-| `03_ui_ux_design_prompt.md` | **UI/UX 설계 프롬프트** — 화면 목록·플로우·카피·디자인 토큰 | 화면 구현·디자이너 협업 시 |
-| `04_prd_context_prompt.md` | **PRD 컨텍스트 프롬프트** — 타 AI(ChatGPT/Gemini)에 기획·QA·마케팅 위임 시 | 모집글·이용약관·테스트 케이스 작성 등 |
-| `README.md` | 이 파일 — 인덱스 및 시작 가이드 | 항상 |
+| [`01_claude_code_dev_prompt.md`](01_claude_code_dev_prompt.md) | Claude Code 개발 지시 프롬프트 — 루트 [`/CLAUDE.md`](../CLAUDE.md) 의 포인터 | 📌 항시 |
+| [`02_api_integration_spec.md`](02_api_integration_spec.md) | 백엔드 API 연동 명세 (엔드포인트·SSE 프레임·DTO) | 📌 항시 |
+| [`03_ui_ux_design_prompt.md`](03_ui_ux_design_prompt.md) | UI/UX 설계 프롬프트 (초기 디자인 원본) | 📚 참고 |
+| [`04_prd_context_prompt.md`](04_prd_context_prompt.md) | PRD 컨텍스트 (타 AI 위임 시) | 📚 참고 |
+| [`05_play_release_guide.md`](05_play_release_guide.md) | Play Console 출시 가이드 (키스토어·AAB·내부테스트) | 📌 항시 |
+| [`06_ios_release_guide.md`](06_ios_release_guide.md) | iOS 출시 가이드 (Bundle·서명·TestFlight) | 📌 항시 |
+| [`07_changelog.md`](07_changelog.md) | 누적 변경 이력 | 📌 항시 |
+| [`08_privacy_policy.md`](08_privacy_policy.md) | 개인정보 처리방침 (공개 게시 본문) | 📌 항시 |
+| [`09_ios_smoke_checklist.md`](09_ios_smoke_checklist.md) | iOS 실기기 스모크 체크리스트 | 📌 항시 |
+| [`10_store_listing.md`](10_store_listing.md) | Play Console / App Store 등록 카피 (한국어) | 📌 항시 |
+| [`11_error_catalog.md`](11_error_catalog.md) | 사용자 노출 에러/안내 메시지 단일 정리표 | 📌 항시 |
+
+> **항시** = 코드와 함께 갱신 / **참고** = 초기 결정 자료, 박제
 
 ---
 
 ## 🚀 빠른 시작
 
-### 1. Flutter 프로젝트 부트스트랩
+새 환경에서 작업할 때:
+
 ```bash
 cd /Users/cheonsedong/Documents/appProject/school-advisor-flutter
-flutter create . \
-  --org com.sedoli \
-  --project-name school_advisor \
-  --platforms=android,ios \
-  --description "학폭위 자문 앱"
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+flutter analyze
+flutter test
+flutter run --dart-define=API_BASE_URL=https://school-advisor.sedoli.co.kr --dart-define=APP_ENV=dev
 ```
 
-### 2. 개발 지시 프롬프트를 루트에 복사
-```bash
-cp docs/01_claude_code_dev_prompt.md ./CLAUDE.md
-```
-
-### 3. Claude Code 시작
-```bash
-claude
-```
-첫 메시지:
-```
-CLAUDE.md 읽고 Sprint 1부터 시작해줘.
-```
+상세 실행/빌드 명령은 루트 [`README.md`](../README.md) 참고.
 
 ---
 
-## 🏗 아키텍처 한눈에 보기
+## 🏗 아키텍처 (현재 시점)
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│                  Flutter App (이 레포)                      │
+│                   Flutter App (이 레포)                     │
 │                                                            │
 │  Presentation (Widgets) ─ Riverpod Notifier ─ Repository   │
 │                                       │                    │
 │                                       ▼                    │
-│                          Dio + flutter_client_sse          │
+│                  Dio + 자체 SSE 디코더 + drift (로컬)       │
+│                  Firebase Messaging + in_app_purchase      │
 └──────────────────────────────────┬─────────────────────────┘
                                    │ HTTPS
                                    ▼
 ┌────────────────────────────────────────────────────────────┐
 │        FastAPI 백엔드 (school-advisor / AWS 서울)           │
-│   /api/v1/chat (SSE)  /laws  /feedback  /user/status       │
+│   /api/v1/{chat, laws, feedback, user, purchase, ...}       │
 │       │                                                    │
 │       ├─ HybridRetriever (pgvector + tsvector RRF)         │
 │       ├─ Generator (Claude Sonnet 4.6 / Haiku 4.5)         │
@@ -69,101 +67,73 @@ CLAUDE.md 읽고 Sprint 1부터 시작해줘.
 ```
 
 - **인증/식별**: `X-Device-ID` 헤더 (회원가입 없는 익명 식별)
-- **스트리밍**: SSE (`event: text|citation|done|error`)
-- **상태관리**: Riverpod (AsyncNotifier 중심)
-- **HTTP**: Dio + Interceptor (Device ID, 에러 매핑)
-- **결제**: Google Play 인앱결제 (`in_app_purchase` 패키지)
+- **스트리밍**: 자체 SSE 디코더 (`text/event-stream` → `event: text|citation|done|error`)
+- **상태관리**: Riverpod (`NotifierProvider` / `FutureProvider` / `StreamProvider`)
+- **HTTP**: Dio + DeviceID/Error Interceptor
+- **로컬 저장소**: drift (대화 이력, 신고서, 알림 인박스) + flutter_secure_storage (Device ID)
+- **결제**: `in_app_purchase` (Android/iOS 자동 분기) → 백엔드 `/api/v1/purchase/verify` 검증
+- **푸시**: Firebase Cloud Messaging + flutter_local_notifications, 토큰은 백엔드 `/api/v1/user/push_token` 등록
 
 ---
 
 ## ⚠️ 절대 원칙 (앱 단에서 강제)
 
-1. **면책 고지 의무** — 답변마다 자동 부착, 첫 실행 전체화면 동의
-2. **개인정보 입력 차단** — 이름·학교명·주민번호 패턴 감지 시 입력 단계에서 경고
-3. **앱 단 Rate Hint** — 백엔드 429 도착 전, 앱이 일 사용량 표시
-4. **결제 검증 우선** — 구매 토큰은 반드시 백엔드 검증 후 활성화 (Phase 3)
-5. **에러 메시지 한국어 일관성** — `code → 사용자 친화 문구` 매핑 테이블 단일화
-6. **다크모드 의무** — 시스템 테마 따라가기
+1. **면책 고지 의무** — 답변마다 `DisclaimerBanner` 자동 부착, 첫 실행 전체화면 동의 (`SharedPreferences` 영속화)
+2. **개인정보 입력 차단** — 주민번호/휴대폰/학교명 정규식 감지 → 다이얼로그 → 자동 마스킹 옵션 (`shared/utils/pii_detector.dart`)
+3. **앱 단 사용량 가시성** — `usage_indicator` 가 `/api/v1/user/status` 폴링 → AppBar 칩
+4. **결제 검증 우선** — Play/StoreKit 토큰은 반드시 백엔드 검증 후 활성화 (클라이언트 단독 신뢰 금지)
+5. **에러 메시지 한국어 일관성** — `core/error/error_mapper.dart` 단일 소스 → 카탈로그는 [`11_error_catalog.md`](11_error_catalog.md)
+6. **다크모드 의무** — 시스템 테마 자동 추종, `inkColor()` 헬퍼로 라이트/다크 동시 검수
 
 ---
 
-## 🗂 권장 디렉토리 (참고)
+## 🗂 주요 디렉토리
 
 ```
 lib/
-├── main.dart
-├── app.dart                       # MaterialApp + Router
+├── main.dart / app.dart               # bootstrap + ProviderScope + Router
+├── env.dart                           # --dart-define 상수
 ├── core/
-│   ├── config/                    # env, base_url, flavor
-│   ├── http/                      # Dio + interceptors
-│   ├── sse/                       # SSE 클라이언트 (chat 전용)
-│   ├── error/                     # AppException, error_mapper
-│   ├── theme/                     # ColorScheme, TextTheme, tokens
-│   └── routing/                   # go_router config
+│   ├── http/                          # Dio + DeviceID/Error Interceptor
+│   ├── sse/                           # 자체 SSE 디코더
+│   ├── error/                         # AppException + error_mapper
+│   ├── push/                          # FCM + 로컬 알림 + 페이로드 라우팅
+│   ├── db/                            # drift AppDatabase
+│   ├── theme/                         # Material 3 + Calm Green
+│   ├── routing/                       # go_router
+│   ├── observability/                 # Sentry init
+│   └── dev/demo_seeder.dart           # SEED_DEMO 빌드 mock 데이터
 ├── features/
-│   ├── onboarding/                # 면책 고지, 3단계 소개
-│   ├── chat/                      # 대화형 Q&A (SSE 소비)
-│   ├── laws/                      # 조문 검색·조회
-│   ├── flowchart/                 # 절차 플로우 (정적)
-│   ├── faq/                       # 사전 캐시 답변
-│   ├── feedback/                  # 1~5점 평가
-│   ├── user/                      # 이용권 상태, 사용량 표시
-│   └── purchase/                  # 인앱결제 (Phase 3)
-├── shared/
-│   ├── widgets/                   # 재사용 위젯 (DisclaimerBanner 등)
-│   ├── models/                    # JSON serializable
-│   └── utils/                     # PII 패턴, device id
-└── l10n/                          # 향후 다국어
+│   ├── onboarding/                    # 면책 + 인트로
+│   ├── role/                          # 학생/보호자/교사 역할 선택
+│   ├── chat/                          # SSE 채팅 + 인용 칩 + 멀티턴
+│   ├── conversation/                  # 대화 이력 (drift)
+│   ├── laws/                          # 조문 검색 + 바텀시트
+│   ├── flowchart/                     # 절차 흐름도
+│   ├── faq/                           # 사전 캐시 답변
+│   ├── feedback/                      # 평가/신고
+│   ├── user/                          # 이용권·사용량
+│   ├── report/                        # 익명 신고서 3-step + R-번호 추적
+│   ├── notifications/                 # 인박스 + 푸시 토글
+│   ├── settings/                      # 테마·알림·라이선스
+│   └── purchase/                      # 인앱결제
+└── shared/                            # 공용 위젯/모델/유틸
 ```
 
 ---
 
-## 📚 참고 (백엔드 레포 위치)
+## ✅ 출시 체크리스트
 
-API 변경·엔드포인트 추가 확인이 필요하면 백엔드 레포의 다음 파일을 참고:
+세부 체크리스트는 별도 문서로 분리되어 있습니다:
 
-```
-/Users/cheonsedong/Documents/appProject/school-advisor/
-├── app/api/chat.py        # SSE 프레임 포맷 원본
-├── app/api/laws.py
-├── app/api/feedback.py
-├── app/api/user.py
-├── app/schemas/*.py       # Pydantic 모델 = JSON 스키마 진실의 원천
-└── docs/
-    ├── 02_system_prompt.md   # 답변 톤·금칙어 — 앱 가드레일과 중복 안 되게 참고
-    └── 학폭위_자문앱_PRD_v1.0.docx  # 제품 기획 원본
-```
-
----
-
-## ✅ 체크리스트 (앱 출시 전)
-
-### 기능
-- [ ] 첫 실행 면책 동의 화면 (체크 안 하면 진행 불가)
-- [ ] 채팅 SSE 정상 수신 (text/citation/done/error 4종)
-- [ ] 인용 칩 탭 → 원문 시트 (`/api/v1/laws` 호출)
-- [ ] 사용량 인디케이터 (남은 횟수 / 일 한도)
-- [ ] FAQ 퀵 탭 (LLM 미호출, 로컬 자산)
-- [ ] 절차 흐름도 (정적 위젯, 6단계)
-- [ ] 답변 피드백 (1~5점)
-- [ ] AI 답변 신고 기능 (Play 정책 필수)
-
-### 비기능
-- [ ] 면책 문구가 답변마다 자동 노출
-- [ ] 개인정보 패턴 감지 시 입력 차단 또는 마스킹
-- [ ] 다크모드 / 라이트모드 모두 검수
-- [ ] 한국어 폰트 가독성 (Pretendard 권장)
-- [ ] 네트워크 끊김 시 재시도 UI
-- [ ] 앱 첫 실행에서 Device ID 생성·영구 저장 (Secure Storage)
-
-### Play Console (Phase 3)
-- [ ] Data Safety 섹션 정확히 작성
-- [ ] AI Content 정책 — 답변 신고 기능 명시
-- [ ] 14일 내부테스트 요건 충족 (테스터 20명 이상)
-- [ ] 인앱결제 상품 등록 (`sa_7day`, `sa_30day`, `sa_teacher_monthly`)
+- **Play Console** → [`05_play_release_guide.md`](05_play_release_guide.md)
+- **App Store / TestFlight** → [`06_ios_release_guide.md`](06_ios_release_guide.md)
+- **iOS 실기기 스모크** → [`09_ios_smoke_checklist.md`](09_ios_smoke_checklist.md)
+- **스토어 등록 카피** → [`10_store_listing.md`](10_store_listing.md)
 
 ---
 
 | 버전 | 날짜 | 변경 내역 |
 |---|---|---|
-| v1.0 | 2026-04-25 | 초기 작성 (백엔드 Sprint 1~5 완료 시점 기준) |
+| v1.0 | 2026-04-25 | 초기 작성 (Sprint 1~5 완료 시점) |
+| v2.0 | 2026-04-27 | 11개 docs 인덱스로 전면 갱신, 아키텍처 도식 현재 코드 반영 |

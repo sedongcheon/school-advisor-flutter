@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-04-27 — 자산 보강 + 데모 시드 + 스토어 메타 + 백엔드 연동 활성화
+
+### 자산
+- `assets/laws/index.json` v2 — 학폭예방법·시행령·시행규칙 조문 확장
+- `assets/faq/faq_seed.json` v2 — `cyber` 카테고리 신설 + 항목 보강
+
+### 데모 모드
+- `lib/core/dev/demo_seeder.dart` — `--dart-define=SEED_DEMO=true` 빌드 첫 실행 시 mock reports 3건 + inbox 3건 자동 적재 (운영 빌드는 항상 no-op)
+- `lib/env.dart` — `Env.seedDemo` 상수 추가
+- `lib/app.dart` — `initState` 에서 `Future.microtask(() => DemoSeeder.maybeSeed(ref))`
+
+### 문서
+- `docs/10_store_listing.md` — Play Console / App Store 등록 카피 (한국어, 4000자 자세한 설명·키워드·스크린샷 캡션·등급 답변·데이터 보안 양식)
+- `docs/11_error_catalog.md` — 사용자 노출 에러/안내 메시지 단일 정리표 (네트워크·SSE·PII·결제·푸시·사안·평가·빈상태·면책)
+- `README.md` — 사용자 흐름 ASCII 다이어그램, 역할 선택 단계, 데모 모드, 부록 docs 링크
+- `docs/01_claude_code_dev_prompt.md` — 루트 `/CLAUDE.md` 와의 이중 관리 회피를 위해 포인터로 축소
+- `docs/README.md` — 11개 docs 인덱스로 전면 갱신, 아키텍처 도식 현재 코드 반영
+
+### 백엔드 연동 활성화 (직전 커밋 누락분 보정)
+- `lib/features/purchase/application/purchase_notifier.dart` — `platform` 하드코딩 `'android'` → `Platform.isIOS ? 'ios' : 'android'` 분기
+- `lib/core/push/push_messaging_service.dart` — `_postTokenToBackend` stub 해제, `POST /api/v1/user/push_token` 실제 호출 (실패 시 non-blocking debugPrint)
+
+---
+
 ## 2026-04-26 — 인앱결제 클라이언트 (앱 담당 6)
 
 - `in_app_purchase: ^3.2.0` 패키지 도입
@@ -89,8 +113,8 @@
 - `AndroidManifest.xml` — `POST_NOTIFICATIONS` (Android 13+), `INTERNET` 권한
 - `android/app/build.gradle.kts` — core library desugaring 활성화 (`flutter_local_notifications` 요구)
 
-### 백엔드 stub
-- `_postTokenToBackend` 는 디버그 출력만. 백엔드 `POST /api/v1/user/push_token` 활성화 시 한 줄 변경.
+### 백엔드 연동
+- `_postTokenToBackend` 가 `POST /api/v1/user/push_token` 호출 (2026-04-27 활성화, 실패 시 non-blocking)
 - 실 토큰 검증: Firebase Console "테스트 메시지 보내기" 로 확인됨 (포어그라운드 알림 수신)
 
 ---
@@ -208,8 +232,8 @@
 ## 백엔드 (참고)
 
 본 클라이언트와 같이 동작하는 백엔드 변경은 `school-advisor` 레포에서 별도 관리.
-2026-04-26 시점 기준 백엔드 측에 다음이 추가된 것으로 사용자가 알림:
-- `POST /api/v1/user/push_token` (Phase 3.3)
-- `POST /api/v1/purchase/verify` (Phase 3.2)
 
-→ 클라이언트 측 stub 활성화는 백엔드 호출 스펙 확인 후 별도 작업.
+| 엔드포인트 | 백엔드 추가 | 클라이언트 활성화 |
+|---|---|---|
+| `POST /api/v1/purchase/verify` (Phase 3.2) | 2026-04-26 | 2026-04-27 (Android/iOS 자동 분기) |
+| `POST /api/v1/user/push_token` (Phase 3.3) | 2026-04-26 | 2026-04-27 (실패 non-blocking) |
