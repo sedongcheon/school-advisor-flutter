@@ -217,7 +217,7 @@ shared/
 - Android 알림 채널: `general` (high importance)
 - 현재 상태:
   - **클라이언트 완성** — Firebase Console "테스트 메시지 보내기" 로 검증 가능
-  - 백엔드 `POST /api/v1/user/push_token` 호출은 **stub** (디버그 출력만). 백엔드 엔드포인트 추가 후 `_postTokenToBackend` 활성화
+  - 토큰 발급/리프레시 시 `POST /api/v1/user/push_token` 자동 호출 (실패 non-blocking)
 
 ### 사용자 작업 (실기기 검증 시점)
 
@@ -227,9 +227,12 @@ shared/
   2. 콘솔에 `[push] FCM token: <token>` 출력 확인
   3. Firebase Console → Cloud Messaging → 새 캠페인 → 토큰 직접 입력 → 메시지 발송
 
-## 다음 단계 (Phase 3.2)
+## Phase 3.2 — 인앱결제 (현재 시점)
 
-- Phase 3.2: 인앱결제 — **백엔드 `/api/v1/purchase/verify` 추가됨 (2026-04-26)**, 클라이언트 호출 스펙 정합 후 통합 예정
+- 백엔드 `POST /api/v1/purchase/verify` 정합 완료 (2026-04-26)
+- 클라이언트 `purchase_notifier.dart` — Android/iOS 자동 분기 (`Platform.isIOS ? 'ios' : 'android'`)
+- 검증 흐름: Play/StoreKit `purchaseStream` → `_verifyAndAcknowledge` → `verify()` → `userStatusProvider.refresh()`
+- 실기기 검증은 Play Console 라이선스 테스트 계정 / TestFlight 샌드박스 필요
 
 ## 부록 docs
 

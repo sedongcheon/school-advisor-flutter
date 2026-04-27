@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -154,7 +155,7 @@ class PurchaseNotifier extends Notifier<PurchaseState> {
     try {
       final repo = await ref.read(purchaseRepositoryProvider.future);
       final result = await repo.verify(
-        platform: 'android',
+        platform: Platform.isIOS ? 'ios' : 'android',
         productId: productId,
         purchaseToken: token,
       );

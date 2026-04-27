@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../firebase_options.dart';
+import '../http/dio_provider.dart';
 import 'notification_payload.dart';
 
 /// 알림 탭으로 도달한 페이로드를 라우터가 처리할 때까지 잠시 보관.
@@ -18,7 +19,7 @@ final pendingPushPayloadProvider = StateProvider<NotificationPayload?>(
 /// FCM 토큰 발급, 권한 요청, 메시지 핸들러를 관리.
 ///
 /// 권한 토글은 `notificationsEnabledProvider` 가 제어한다.
-/// 백엔드 토큰 등록 엔드포인트가 준비되면 [_postTokenToBackend] 채워 넣는다.
+/// 토큰 발급/리프레시 시 백엔드 `POST /api/v1/user/push_token` 으로 등록한다.
 class PushMessagingService {
   PushMessagingService(this.ref);
 
@@ -157,13 +158,17 @@ class PushMessagingService {
     ref.read(pendingPushPayloadProvider.notifier).state = payload;
   }
 
-  /// 백엔드 `POST /api/v1/user/push_token` 가 준비되면 호출 활성화.
-  /// 현재는 stub 으로 디버그 출력만.
+  /// 백엔드 `POST /api/v1/user/push_token` 호출. 실패해도 non-blocking.
   Future<void> _postTokenToBackend(String token) async {
-    debugPrint('[push] (stub) would post token to backend: $token');
-    // TODO(phase-3.3-backend): 백엔드 엔드포인트 추가 후 활성화
-    // final dio = await ref.read(dioProvider.future);
-    // await dio.post('/api/v1/user/push_token', data: {'token': token});
+    try {
+      final dio = await ref.read(dioProvider.future);
+      await dio.post<dynamic>(
+        '/api/v1/user/push_token',
+        data: {'token': token},
+      );
+    } on Object catch (e) {
+      debugPrint('[push] post token failed (non-blocking): $e');
+    }
   }
 }
 
