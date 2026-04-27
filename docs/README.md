@@ -70,7 +70,7 @@ flutter run --dart-define=API_BASE_URL=https://school-advisor.sedoli.co.kr --dar
 - **스트리밍**: 자체 SSE 디코더 (`text/event-stream` → `event: text|citation|done|error`)
 - **상태관리**: Riverpod (`NotifierProvider` / `FutureProvider` / `StreamProvider`)
 - **HTTP**: Dio + DeviceID/Error Interceptor
-- **로컬 저장소**: drift (대화 이력, 신고서, 알림 인박스) + flutter_secure_storage (Device ID)
+- **로컬 저장소**: drift (대화 이력, 사안 정리 노트, 알림 인박스) + flutter_secure_storage (Device ID)
 - **결제**: `in_app_purchase` (Android/iOS 자동 분기) → 백엔드 `/api/v1/purchase/verify` 검증
 - **푸시**: Firebase Cloud Messaging + flutter_local_notifications, 토큰은 백엔드 `/api/v1/user/push_token` 등록
 
@@ -84,6 +84,19 @@ flutter run --dart-define=API_BASE_URL=https://school-advisor.sedoli.co.kr --dar
 4. **결제 검증 우선** — Play/StoreKit 토큰은 반드시 백엔드 검증 후 활성화 (클라이언트 단독 신뢰 금지)
 5. **에러 메시지 한국어 일관성** — `core/error/error_mapper.dart` 단일 소스 → 카탈로그는 [`11_error_catalog.md`](11_error_catalog.md)
 6. **다크모드 의무** — 시스템 테마 자동 추종, `inkColor()` 헬퍼로 라이트/다크 동시 검수
+
+---
+
+## 🧭 포지셔닝 — 모델 D (개인 사안 노트)
+
+본 앱의 **사안 정리** 기능은 신고 접수 시스템이 아니라 **본인 기기에 저장하는 개인용 메모**입니다 (2026-04-27 결정).
+
+- 사안 노트는 학교·교육청·경찰에 자동 전달되지 않음 — `reports_remote_repository.dart` 는 stub
+- 단계 진행은 본인이 수동으로 옮기는 체크리스트
+- 보호자/교사 모드 = 같은 노트의 다른 톤·메뉴 (데이터 격리·권한 분기 없음, 클라이언트의 `isTeacher` 분기는 UX 페르소나)
+- 실제 신고는 학교 학교폭력 전담기구 또는 117 외부 채널
+
+이 결정의 배경과 대안 모델(A: 가족/학교 코드, B: 정식 회원체계, C: 신고 기능 제거)은 `docs/07_changelog.md` 의 "모델 D" 항목 참고.
 
 ---
 
@@ -113,7 +126,7 @@ lib/
 │   ├── faq/                           # 사전 캐시 답변
 │   ├── feedback/                      # 평가/신고
 │   ├── user/                          # 이용권·사용량
-│   ├── report/                        # 익명 신고서 3-step + R-번호 추적
+│   ├── report/                        # 사안 정리 노트 3-step + 메모 번호 (본인 기기 저장, 모델 D)
 │   ├── notifications/                 # 인박스 + 푸시 토글
 │   ├── settings/                      # 테마·알림·라이선스
 │   └── purchase/                      # 인앱결제
