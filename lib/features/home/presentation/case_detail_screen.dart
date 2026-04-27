@@ -7,9 +7,8 @@ import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 import '../../notifications/data/inbox_repository.dart';
 import '../../report/data/reports_repository.dart';
-import '../../role/application/user_role_notifier.dart';
 
-/// 사안 상세 (교사용) — receiptNo 로 reports 에서 조회 + 단계 진행 버튼.
+/// 사안 노트 상세 — receiptNo 로 reports 에서 조회 + 단계 표시 버튼.
 /// reportsAllProvider 를 watch 해서 statusCode 변경 시 자동 갱신.
 class CaseDetailScreen extends ConsumerWidget {
   const CaseDetailScreen({required this.receiptNo, super.key});
@@ -23,7 +22,7 @@ class CaseDetailScreen extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('사안을 삭제할까요?'),
+        title: const Text('사안 메모를 삭제할까요?'),
         content: Text(
           '${row.receiptNo} 의 모든 정보가 기기에서 사라집니다.\n'
           '되돌릴 수 없습니다.',
@@ -52,7 +51,9 @@ class CaseDetailScreen extends ConsumerWidget {
     if (removed) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('사안이 삭제되었어요.')));
+      ).showSnackBar(
+        const SnackBar(content: Text('사안 메모가 삭제되었어요.')),
+      );
       if (context.canPop()) {
         context.pop();
       } else {
@@ -72,10 +73,11 @@ class CaseDetailScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: const Text('다음 단계로 진행할까요?'),
+          title: const Text('이 단계로 표시할까요?'),
           content: Text(
             '${ReportsRepository.statusLabel(row.statusCode)} → '
-            '${ReportsRepository.statusLabel(next)}',
+            '${ReportsRepository.statusLabel(next)}\n\n'
+            '학교·전담기구와 외부에서 진행한 결과를 노트에 표시하는 거예요.',
             style: const TextStyle(fontSize: 13.5, height: 1.5),
           ),
           actions: [
@@ -85,7 +87,7 @@ class CaseDetailScreen extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('진행'),
+              child: const Text('표시하기'),
             ),
           ],
         );
@@ -108,7 +110,9 @@ class CaseDetailScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${ReportsRepository.statusLabel(to)} 단계로 변경되었어요.'),
+        content: Text(
+          '${ReportsRepository.statusLabel(to)} 단계로 표시했어요.',
+        ),
       ),
     );
   }
@@ -123,9 +127,6 @@ class CaseDetailScreen extends ConsumerWidget {
         break;
       }
     }
-    final role = ref.watch(userRoleProvider);
-    final isTeacher = role == UserRole.teacher;
-
     return Scaffold(
       backgroundColor: AppTokens.lBg,
       appBar: AppBar(
@@ -155,33 +156,27 @@ class CaseDetailScreen extends ConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          if (isTeacher)
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.more_horiz, color: AppTokens.lInk),
-              onSelected: (key) async {
-                final r = report;
-                if (key == 'delete' && r != null) {
-                  await _confirmDelete(context, ref, r);
-                }
-              },
-              itemBuilder: (_) => const [
-                PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                      SizedBox(width: 10),
-                      Text('사안 삭제'),
-                    ],
-                  ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_horiz, color: AppTokens.lInk),
+            onSelected: (key) async {
+              final r = report;
+              if (key == 'delete' && r != null) {
+                await _confirmDelete(context, ref, r);
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                    SizedBox(width: 10),
+                    Text('사안 메모 삭제'),
+                  ],
                 ),
-              ],
-            )
-          else
-            const Padding(
-              padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.more_horiz, color: AppTokens.lInk),
-            ),
+              ),
+            ],
+          ),
         ],
       ),
       body: SafeArea(
@@ -190,7 +185,7 @@ class CaseDetailScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    '해당 번호의 사안을 찾을 수 없어요.',
+                    '해당 번호의 메모를 찾을 수 없어요.',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
@@ -199,12 +194,11 @@ class CaseDetailScreen extends ConsumerWidget {
               )
             : _Body(
                 report: report,
-                isTeacher: isTeacher,
                 onAdvance: () => _advance(context, ref, report!),
                 onAskAi: () {
                   final r = report!;
                   final prompt =
-                      '내 사안(${ReportsRepository.statusLabel(r.statusCode)} 단계)에서 '
+                      '내 사안 노트(${ReportsRepository.statusLabel(r.statusCode)} 단계)에서 '
                       '지금 가장 먼저 해야 할 일이 뭔가요?';
                   context.push(
                     '${AppRoutes.chat}?prefill=${Uri.encodeQueryComponent(prompt)}',
@@ -219,12 +213,10 @@ class CaseDetailScreen extends ConsumerWidget {
 class _Body extends StatelessWidget {
   const _Body({
     required this.report,
-    required this.isTeacher,
     required this.onAdvance,
     required this.onAskAi,
   });
   final ReportRow report;
-  final bool isTeacher;
   final VoidCallback onAdvance;
   final VoidCallback onAskAi;
 
@@ -237,9 +229,11 @@ class _Body extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       children: [
         _StatusCard(report: report),
+        const SizedBox(height: 12),
+        const _ProgressNotice(),
         const SizedBox(height: 14),
         if (report.body.isNotEmpty) ...[
-          const _SectionLabel('신고 내용'),
+          const _SectionLabel('메모 내용'),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
@@ -258,57 +252,35 @@ class _Body extends StatelessWidget {
           ),
           const SizedBox(height: 14),
         ],
-        const _SectionLabel('체크리스트'),
-        _CheckRow(text: '신고 접수 확인', done: stage >= 0),
-        _CheckRow(text: '피해학생 면담', done: stage >= 1),
-        _CheckRow(text: '관련학생 진술서 수령', done: stage >= 1),
-        _CheckRow(text: '심의위원회 개최', done: stage >= 2),
-        _CheckRow(text: '조치 결정 통보', done: stage >= 3),
+        const _SectionLabel('직접 표시하는 체크리스트'),
+        _CheckRow(text: '노트 작성 완료', done: stage >= 0),
+        _CheckRow(text: '학교에 알렸음', done: stage >= 1),
+        _CheckRow(text: '면담·심의 진행 중', done: stage >= 2),
+        _CheckRow(text: '결과를 받고 마무리', done: stage >= 3),
         const SizedBox(height: 14),
         const _SectionLabel('타임라인'),
         _Timeline(report: report),
         const SizedBox(height: 16),
-        if (isTeacher)
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: canAdvance ? onAdvance : null,
-                  child: Text(
-                    canAdvance
-                        ? '${ReportsRepository.statusLabel(next)} 단계로 진행'
-                        : '처리 완료',
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTokens.lCard,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTokens.lLine),
-                ),
-                child: const Text(
-                  '보고서',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppTokens.lPrimary,
-                  ),
-                ),
-              ),
-            ],
-          )
-        else
-          FilledButton.icon(
-            onPressed: onAskAi,
-            icon: const Icon(Icons.chat_bubble_outline, size: 16),
-            label: const Text('AI에 다음 단계 물어보기'),
+        FilledButton(
+          onPressed: canAdvance ? onAdvance : null,
+          child: Text(
+            canAdvance
+                ? '${ReportsRepository.statusLabel(next)} 단계로 표시'
+                : '마무리됨',
           ),
+        ),
+        const SizedBox(height: 8),
+        FilledButton.icon(
+          onPressed: onAskAi,
+          icon: const Icon(Icons.chat_bubble_outline, size: 16),
+          label: const Text('AI에 다음 단계 물어보기'),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppTokens.lCard,
+            foregroundColor: AppTokens.lPrimary,
+            elevation: 0,
+            side: const BorderSide(color: AppTokens.lLine),
+          ),
+        ),
       ],
     );
   }
@@ -401,6 +373,41 @@ class _SectionLabel extends StatelessWidget {
   );
 }
 
+class _ProgressNotice extends StatelessWidget {
+  const _ProgressNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      decoration: BoxDecoration(
+        color: AppTokens.lTileTint,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTokens.lLine),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, size: 16, color: AppTokens.lPrimaryDeep),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '학교·전담기구와 외부에서 진행한 상황을 본인이 직접 표시하는 '
+              '체크리스트예요. 단계 변경은 외부에서 진행한 결과를 노트에 '
+              '기록하는 의미입니다.',
+              style: TextStyle(
+                fontSize: 11.5,
+                height: 1.5,
+                color: AppTokens.lInk,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _CheckRow extends StatelessWidget {
   const _CheckRow({required this.text, this.done = false});
   final String text;
@@ -460,10 +467,10 @@ class _Timeline extends StatelessWidget {
     final stage = ReportsRepository.stageIndex(report.statusCode);
     final updated = stage > 0 ? fmt(report.updatedAt) : '-';
     final items = <(String, String, bool)>[
-      (fmt(report.createdAt), '신고 접수', stage >= 0),
-      (stage >= 1 ? updated : '-', '사안 조사 시작', stage >= 1),
-      (stage >= 2 ? updated : '-', '심의위원회 회부', stage >= 2),
-      (stage >= 3 ? updated : '-', '조치 결정 통보', stage >= 3),
+      (fmt(report.createdAt), '사안 노트 저장', stage >= 0),
+      (stage >= 1 ? updated : '-', '학교에 알린 단계로 표시', stage >= 1),
+      (stage >= 2 ? updated : '-', '면담·심의 진행 단계로 표시', stage >= 2),
+      (stage >= 3 ? updated : '-', '마무리 단계로 표시', stage >= 3),
     ];
     return Column(
       children: [

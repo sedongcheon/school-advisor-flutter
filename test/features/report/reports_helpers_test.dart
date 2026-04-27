@@ -36,11 +36,11 @@ void main() {
   });
 
   group('ReportsRepository.statusLabel', () {
-    test('각 코드를 한국어로 매핑', () {
-      expect(ReportsRepository.statusLabel('received'), '접수 완료');
-      expect(ReportsRepository.statusLabel('investigating'), '사안 조사 중');
-      expect(ReportsRepository.statusLabel('review'), '심의 진행');
-      expect(ReportsRepository.statusLabel('concluded'), '조치 완료');
+    test('각 코드를 한국어로 매핑 (모델 D — 본인이 표시하는 노트 단계)', () {
+      expect(ReportsRepository.statusLabel('received'), '노트 작성 완료');
+      expect(ReportsRepository.statusLabel('investigating'), '학교에 알렸어요');
+      expect(ReportsRepository.statusLabel('review'), '면담·심의 진행 중');
+      expect(ReportsRepository.statusLabel('concluded'), '마무리됨');
     });
     test('알 수 없는 코드는 진행 중 라벨', () {
       expect(ReportsRepository.statusLabel('unknown'), '진행 중');
@@ -51,15 +51,15 @@ void main() {
     test('각 단계 전환별 milestone 제목', () {
       expect(
         ReportsRepository.milestoneTitle('received', 'investigating'),
-        contains('조사'),
+        contains('학교'),
       );
       expect(
         ReportsRepository.milestoneTitle('investigating', 'review'),
-        contains('심의'),
+        contains('면담·심의'),
       );
       expect(
         ReportsRepository.milestoneTitle('review', 'concluded'),
-        contains('조치'),
+        contains('마무리'),
       );
     });
   });

@@ -85,11 +85,12 @@ class ReportsRepository {
   };
 
   /// `received → investigating` 같은 상태 전환을 사용자 노출 milestone 으로.
+  /// 본 앱 단계는 "본인이 외부 채널과 진행한 결과를 표시하는 체크리스트" 의미.
   static String milestoneTitle(String fromCode, String toCode) =>
       switch (toCode) {
-        'investigating' => '사안 조사가 시작됐어요',
-        'review' => '심의위원회로 회부됐어요',
-        'concluded' => '조치 결정이 통보됐어요',
+        'investigating' => '학교에 알린 단계로 표시했어요',
+        'review' => '면담·심의 진행 단계로 표시했어요',
+        'concluded' => '마무리 단계로 표시했어요',
         _ => '진행 단계가 변경됐어요',
       };
 
@@ -122,24 +123,21 @@ class ReportsRepository {
   };
 
   static String statusLabel(String code) => switch (code) {
-    'received' => '접수 완료',
-    'investigating' => '사안 조사 중',
-    'review' => '심의 진행',
-    'concluded' => '조치 완료',
+    'received' => '노트 작성 완료',
+    'investigating' => '학교에 알렸어요',
+    'review' => '면담·심의 진행 중',
+    'concluded' => '마무리됨',
     _ => '진행 중',
   };
-}
 
-/// 교사 홈 KPI 요약.
-class ReportsKpi {
-  const ReportsKpi({
-    required this.inProgress,
-    required this.reviewSoon,
-    required this.total,
-  });
-  final int inProgress;
-  final int reviewSoon;
-  final int total;
+  /// 4단계 짧은 라벨 (진행 바 / 미니 표시용).
+  static String shortStageLabel(int idx) => switch (idx) {
+    0 => '노트',
+    1 => '학교 알림',
+    2 => '면담·심의',
+    3 => '마무리',
+    _ => '',
+  };
 }
 
 /// reports 전체 watch.
@@ -147,32 +145,12 @@ final reportsAllProvider = StreamProvider<List<ReportRow>>((ref) {
   return ref.watch(reportsRepositoryProvider).watchAll();
 });
 
-/// 가장 최근 1건 (보호자 홈 자녀 카드용).
+/// 가장 최근 1건 (홈 화면 빠른 진입용).
 final latestReportProvider = Provider<ReportRow?>((ref) {
   final state = ref.watch(reportsAllProvider);
   return state.maybeWhen(
     data: (list) => list.isEmpty ? null : list.first,
     orElse: () => null,
-  );
-});
-
-/// 교사 홈 KPI.
-final reportsKpiProvider = Provider<ReportsKpi>((ref) {
-  final state = ref.watch(reportsAllProvider);
-  final list = state.value ?? const <ReportRow>[];
-  final inProgress = list
-      .where(
-        (r) =>
-            r.statusCode == 'received' ||
-            r.statusCode == 'investigating' ||
-            r.statusCode == 'review',
-      )
-      .length;
-  final reviewSoon = list.where((r) => r.statusCode == 'review').length;
-  return ReportsKpi(
-    inProgress: inProgress,
-    reviewSoon: reviewSoon,
-    total: list.length,
   );
 });
 

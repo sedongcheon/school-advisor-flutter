@@ -5,6 +5,59 @@
 
 ---
 
+## 2026-04-27 — 옵션 A: 역할 모드 제거 + 단계 라벨 재정의 (모델 D 후속)
+
+### 의도
+- "학생/보호자/교사" 모드가 라벨만 다르고 데이터·기능이 같아 사용자에게 거짓 약속이 됨 (App Store/Play 검토 리스크)
+- 단계 라벨이 학교 절차 단어("접수/조사/심의/조치") 라서 "이 앱이 처리한다" 는 인상 잔존 → 본인이 외부에서 진행한 결과를 표시하는 체크리스트 의미로 재정의
+
+### 코드 삭제
+- `lib/features/role/` 전체 (`user_role_notifier.dart` / `role_picker_screen.dart`)
+- `lib/features/home/presentation/role_home_router.dart`
+- `lib/features/home/presentation/guardian_home_screen.dart`
+- `lib/features/home/presentation/teacher_home_screen.dart`
+- `test/features/role/` 전체
+
+### 코드 수정
+- `lib/core/routing/app_router.dart`
+  - `/onboarding/role` 라우트 제거, redirect 가드도 면책 동의만 검사하도록 단순화
+  - `/` 진입점 `RoleHomeRouter` → `HomeScreen` 직접
+  - `_BootListenable` 의 role subscribe 제거
+- `lib/features/onboarding/presentation/onboarding_screen.dart` — 종료 시 `/onboarding/role` → `/` (홈) 직접
+- `lib/features/home/presentation/case_detail_screen.dart`
+  - `userRoleProvider` / `isTeacher` 분기 제거 — 삭제 메뉴/단계 표시 버튼 모두에게 노출
+  - "다음 단계로 진행" → "이 단계로 표시", "사안 삭제" → "사안 메모 삭제"
+  - 본문 상단에 `_ProgressNotice` 안내문 추가 ("외부에서 진행한 결과를 표시하는 체크리스트")
+  - 체크리스트 항목 재라벨 (피해학생 면담/관련학생 진술서/심의위원회 → 학교에 알렸음/면담·심의 진행 중/결과 받고 마무리)
+  - 타임라인 항목 재라벨 (신고 접수/사안 조사 시작/심의위원회 회부/조치 결정 → 사안 노트 저장/학교에 알린 단계로 표시 등)
+- `lib/features/status/presentation/status_detail_screen.dart`
+  - `_stages` 라벨 ['접수','조사','심의','조치'] → ['노트','학교\\n알림','면담\\n심의','마무리']
+  - `_StatusCard._statusLabel` 동일 업데이트, 진행 단계 위 `_ProgressNotice` 추가
+- `lib/features/report/data/reports_repository.dart`
+  - `statusLabel`: '접수 완료/사안 조사 중/심의 진행/조치 완료' → '노트 작성 완료/학교에 알렸어요/면담·심의 진행 중/마무리됨'
+  - `milestoneTitle`: '사안 조사가 시작됐어요/심의위원회로 회부됐어요/조치 결정이 통보됐어요' → '학교에 알린 단계로 표시했어요' 등
+  - `shortStageLabel(idx)` 헬퍼 추가 (진행 바 짧은 라벨용)
+  - `ReportsKpi` / `reportsKpiProvider` 제거 (교사 홈 폐기로 사용처 없음)
+
+### 테스트 변경
+- `test/features/role/role_picker_screen_test.dart` 삭제 (3 tests)
+- `test/features/onboarding/onboarding_screen_test.dart` — "건너뛰기 → 역할 선택" → "건너뛰기 → 홈"
+- `test/features/report/reports_helpers_test.dart` — statusLabel/milestoneTitle 새 라벨로 동기화
+
+### 변경하지 않은 것
+- DB 컬럼 (`statusCode` 값들 'received/investigating/review/concluded' 그대로)
+- 라우트 식별자 (`AppRoutes.report` / `AppRoutes.statusLookup` 등)
+- 117 / 면책 / PII 마스킹 그대로
+- Onboarding 3 슬라이드 카피 (이미 정합됨)
+
+### 효과
+- 첫 사용자 단계 4 → **3** (면책→인트로→홈)
+- 코드 -약 600줄
+- 테스트 58 → **55** 통과
+- App Store/Play 검토 시 "교사·보호자 모드 차이?" 질문 회피
+
+---
+
 ## 2026-04-27 — 모델 D: "개인 사안 노트" 카피 재정렬
 
 신고서가 학교/교육청에 자동 전달된다는 인상을 주는 카피를 정직하게 수정.

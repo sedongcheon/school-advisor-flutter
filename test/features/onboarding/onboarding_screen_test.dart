@@ -13,8 +13,8 @@ Widget _wrap() {
         builder: (_, __) => const OnboardingScreen(),
       ),
       GoRoute(
-        path: '/onboarding/role',
-        builder: (_, __) => const Scaffold(body: Text('role-picker')),
+        path: '/',
+        builder: (_, __) => const Scaffold(body: Text('home')),
       ),
     ],
   );
@@ -33,13 +33,13 @@ void main() {
     expect(find.textContaining('다음'), findsOneWidget);
   });
 
-  testWidgets('건너뛰기 누르면 역할 선택 화면으로 이동', (tester) async {
+  testWidgets('건너뛰기 누르면 홈으로 이동', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('건너뛰기'));
     await tester.pumpAndSettle();
 
-    expect(find.text('role-picker'), findsOneWidget);
+    expect(find.text('home'), findsOneWidget);
   });
 }

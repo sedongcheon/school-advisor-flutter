@@ -10,7 +10,7 @@ class StatusDetailScreen extends ConsumerWidget {
   const StatusDetailScreen({required this.receiptNo, super.key});
   final String receiptNo;
 
-  static const _stages = ['접수', '조사', '심의', '조치'];
+  static const _stages = ['노트', '학교\n알림', '면담\n심의', '마무리'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,7 +65,9 @@ class StatusDetailScreen extends ConsumerWidget {
               children: [
                 _StatusCard(report: report),
                 const SizedBox(height: 14),
-                const _SectionLabel('진행 단계'),
+                const _SectionLabel('내 진행 표시'),
+                const _ProgressNotice(),
+                const SizedBox(height: 8),
                 _StageBar(stages: _stages, currentIdx: _stageIdx(report)),
                 const SizedBox(height: 16),
                 const _SectionLabel('타임라인'),
@@ -154,9 +156,9 @@ class _StatusCard extends StatelessWidget {
   }
 
   String _statusLabel(String code) => switch (code) {
-    'received' => '접수 완료',
-    'investigating' => '사안 조사 중',
-    'review' => '심의 진행',
+    'received' => '노트 작성 완료',
+    'investigating' => '학교에 알렸어요',
+    'review' => '면담·심의 진행 중',
     'concluded' => '조치 완료',
     _ => '진행 중',
   };
@@ -217,6 +219,40 @@ class _StageBar extends StatelessWidget {
   }
 }
 
+class _ProgressNotice extends StatelessWidget {
+  const _ProgressNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      decoration: BoxDecoration(
+        color: AppTokens.lTileTint,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTokens.lLine),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, size: 16, color: AppTokens.lPrimaryDeep),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '학교·전담기구와 진행한 상황을 본인이 직접 표시하는 체크리스트예요. '
+              '단계 변경은 외부에서 진행한 결과를 기록하는 의미입니다.',
+              style: TextStyle(
+                fontSize: 11.5,
+                height: 1.5,
+                color: AppTokens.lInk,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);
   final String text;
@@ -246,9 +282,9 @@ class _Timeline extends StatelessWidget {
         '${created.month}/${created.day} ${created.hour.toString().padLeft(2, '0')}:${created.minute.toString().padLeft(2, '0')}';
     final items = <(String, String, bool)>[
       (formatted, '사안 노트 저장', true),
-      ('-', '피해학생 면담 (예정)', false),
-      ('-', '관련학생 면담 (예정)', false),
-      ('-', '심의위원회 (예정)', false),
+      ('-', '학교 알림 (직접 표시)', false),
+      ('-', '면담 일정 (직접 표시)', false),
+      ('-', '심의 일정 (직접 표시)', false),
     ];
     return Column(
       children: [

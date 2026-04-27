@@ -5,7 +5,7 @@ import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 
 /// 학폭 나침반 — 새 디자인 가이드 기반의 3단계 온보딩.
-/// 마지막에 "시작하기" 누르면 역할 선택 화면으로 이동.
+/// 마지막에 "시작하기" 누르면 홈으로 이동.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -38,7 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   ];
 
-  void _finish() => context.go(AppRoutes.rolePicker);
+  void _finish() => context.go(AppRoutes.home);
 
   void _next() {
     if (_idx == _slides.length - 1) {
