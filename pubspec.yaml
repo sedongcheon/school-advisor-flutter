@@ -1,7 +1,7 @@
 name: school_advisor
 description: "학폭위 자문 모바일 앱 (Flutter 클라이언트)"
 publish_to: 'none'
-version: 0.1.0+2
+version: 0.1.0+3
 
 environment:
   sdk: ^3.11.4
