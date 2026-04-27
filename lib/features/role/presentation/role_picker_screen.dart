@@ -20,7 +20,7 @@ class _RolePickerScreenState extends ConsumerState<RolePickerScreen> {
     _RoleEntry(
       role: UserRole.student,
       title: '학생',
-      sub: '내가 직접 도움이 필요해요',
+      sub: '내가 직접 알아보고 정리해요',
       icon: Icons.person_outline,
       accent: AppTokens.lPrimary,
       tint: AppTokens.lTileTint,
@@ -28,7 +28,7 @@ class _RolePickerScreenState extends ConsumerState<RolePickerScreen> {
     _RoleEntry(
       role: UserRole.guardian,
       title: '보호자',
-      sub: '자녀의 사안을 함께 살펴요',
+      sub: '자녀와 함께 차분히 살펴봐요',
       icon: Icons.people_outline,
       accent: AppTokens.lAccent,
       tint: Color(0xFFFAEAD0),
@@ -36,7 +36,7 @@ class _RolePickerScreenState extends ConsumerState<RolePickerScreen> {
     _RoleEntry(
       role: UserRole.teacher,
       title: '교사 · 전담기구',
-      sub: '학교에서 사안을 처리해요',
+      sub: '학교에서 안내 자료로 활용해요',
       icon: Icons.school_outlined,
       accent: Color(0xFF7A5A2E),
       tint: Color(0xFFF1ECE2),
@@ -85,7 +85,7 @@ class _RolePickerScreenState extends ConsumerState<RolePickerScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    '역할에 맞춰 화면과 도구를 보여드릴게요.\n나중에 설정에서 바꿀 수 있어요.',
+                    '관점에 맞춰 화면 톤과 안내 자료를 다르게 보여드려요.\n어떤 역할을 골라도 같은 기능을 쓸 수 있고, 나중에 설정에서 바꿀 수 있어요.',
                     style: TextStyle(
                       fontSize: 13.5,
                       color: AppTokens.lSub,

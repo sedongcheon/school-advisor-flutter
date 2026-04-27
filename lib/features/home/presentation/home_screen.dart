@@ -20,23 +20,23 @@ class HomeScreen extends ConsumerWidget {
   static List<_HomeMenuItem> _buildGrid(ReportRow? latest) {
     return [
       const _HomeMenuItem(
-        label: '신고하기',
-        subtitle: '익명으로 안전하게',
+        label: '사안 정리하기',
+        subtitle: '본인 기기에 메모',
         path: AppRoutes.report,
         icon: Icons.flag_outlined,
       ),
-      // latestReport 가 있으면 "내 사안 보기" (직접 진입), 없으면 "진행 상황" 조회
+      // latestReport 가 있으면 "내 사안 보기" (직접 진입), 없으면 "메모 찾기" 진입
       if (latest != null)
         _HomeMenuItem(
-          label: '내 사안 보기',
+          label: '내 사안 노트',
           subtitle: ReportsRepository.statusLabel(latest.statusCode),
           path: '${AppRoutes.statusLookup}/${latest.receiptNo}',
           icon: Icons.assignment_outlined,
         )
       else
         const _HomeMenuItem(
-          label: '진행 상황',
-          subtitle: '접수 번호로 조회',
+          label: '내 사안 노트',
+          subtitle: '메모 번호로 찾기',
           path: AppRoutes.statusLookup,
           icon: Icons.timeline,
         ),

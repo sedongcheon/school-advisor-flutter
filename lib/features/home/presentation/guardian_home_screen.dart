@@ -101,6 +101,15 @@ class _Header extends StatelessWidget {
                     letterSpacing: -0.4,
                   ),
                 ),
+                SizedBox(height: 4),
+                Text(
+                  '이 기기에 정리한 사안 노트를 보여드려요.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppTokens.lSub,
+                    height: 1.4,
+                  ),
+                ),
               ],
             ),
           ),
@@ -156,7 +165,7 @@ class _ChildProgressCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '진행 중인 사안',
+              '내가 정리한 사안 노트',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -291,7 +300,7 @@ class _EmptyChildCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '아직 진행 중인 사안이 없어요',
+                    '아직 정리한 사안이 없어요',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
@@ -300,7 +309,7 @@ class _EmptyChildCard extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    '신고하기로 시작해 보세요.',
+                    '"사안 정리하기" 로 첫 메모를 시작해 보세요.',
                     style: TextStyle(fontSize: 11.5, color: AppTokens.lSub),
                   ),
                 ],

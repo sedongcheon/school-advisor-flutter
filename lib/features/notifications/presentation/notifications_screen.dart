@@ -309,7 +309,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '신고나 사안 진행이 있을 때 여기에 알려드릴게요.',
+              '사안 노트 저장·단계 변경이나 가이드 안내가 있을 때 여기에 알려드릴게요.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 11.5, color: AppTokens.lSub),
             ),

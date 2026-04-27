@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/theme/color_scheme.dart';
 
-/// 신고 완료 — R-번호 안내 + 다음 단계.
+/// 사안 노트 저장 완료 — 메모 번호 안내 + 다음 단계 안내.
 class ReportDoneScreen extends StatelessWidget {
   const ReportDoneScreen({required this.receiptNo, super.key});
   final String receiptNo;
@@ -15,7 +15,7 @@ class ReportDoneScreen extends StatelessWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('접수 번호를 복사했어요.')));
+    ).showSnackBar(const SnackBar(content: Text('메모 번호를 복사했어요.')));
   }
 
   @override
@@ -50,7 +50,7 @@ class ReportDoneScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                '접수가 완료되었어요',
+                '사안 노트가 저장되었어요',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22,
@@ -61,7 +61,7 @@ class ReportDoneScreen extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               const Text(
-                '곧 사안 조사가 시작됩니다.\n진행 상황은 아래 번호로 언제든 조회할 수 있어요.',
+                '본인 기기에만 저장된 메모예요.\n학교·교육청에 자동 전달되지 않으니, 실제 신고는 학교 전담기구 또는 117 로 연락해 주세요.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
@@ -83,7 +83,7 @@ class ReportDoneScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text(
-                      '접수 번호',
+                      '메모 번호',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -105,7 +105,7 @@ class ReportDoneScreen extends StatelessWidget {
                     OutlinedButton.icon(
                       onPressed: () => _copy(context),
                       icon: const Icon(Icons.copy, size: 14),
-                      label: const Text('번호 복사'),
+                      label: const Text('메모 번호 복사'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTokens.lPrimary,
                         side: const BorderSide(color: AppTokens.lLine),
@@ -120,7 +120,7 @@ class ReportDoneScreen extends StatelessWidget {
               const Spacer(),
               FilledButton(
                 onPressed: () => context.go(AppRoutes.statusLookup),
-                child: const Text('진행 상황 보기'),
+                child: const Text('내 사안 노트 보기'),
               ),
               const SizedBox(height: 8),
               TextButton(

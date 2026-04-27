@@ -52,7 +52,7 @@ class StatusDetailScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    '해당 번호의 신고를 찾을 수 없어요.',
+                    '해당 번호의 메모를 찾을 수 없어요.',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
@@ -245,7 +245,7 @@ class _Timeline extends StatelessWidget {
     final formatted =
         '${created.month}/${created.day} ${created.hour.toString().padLeft(2, '0')}:${created.minute.toString().padLeft(2, '0')}';
     final items = <(String, String, bool)>[
-      (formatted, '신고 접수', true),
+      (formatted, '사안 노트 저장', true),
       ('-', '피해학생 면담 (예정)', false),
       ('-', '관련학생 면담 (예정)', false),
       ('-', '심의위원회 (예정)', false),

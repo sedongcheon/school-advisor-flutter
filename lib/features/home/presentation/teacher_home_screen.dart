@@ -31,7 +31,7 @@ class TeacherHomeScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '최근 사안',
+                    '최근 사안 노트',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -82,7 +82,7 @@ class _Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '교사 모드 · 전담기구',
+                  '교사 · 전담기구 모드',
                   style: TextStyle(
                     fontSize: 11,
                     color: AppTokens.lSub,
@@ -92,12 +92,21 @@ class _Header extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  '오늘의 사안',
+                  '내가 정리하는 사안 노트',
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.w800,
                     color: AppTokens.lInk,
                     letterSpacing: -0.4,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '이 기기에 저장된 메모만 보여드려요. 학교에서 안내·교육 자료로 활용해 주세요.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppTokens.lSub,
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -358,12 +367,12 @@ class _EmptyCases extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Text(
-              '아직 접수된 사안이 없어요.',
+              '아직 정리한 사안 메모가 없어요.',
               style: TextStyle(fontSize: 13.5, color: AppTokens.lInk),
             ),
             const SizedBox(height: 4),
             Text(
-              '신고가 들어오면 여기에 나타납니다.',
+              '"사안 정리하기" 로 학교에 안내할 사례를 메모해 보세요.',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 11.5, color: AppTokens.lSub),
             ),

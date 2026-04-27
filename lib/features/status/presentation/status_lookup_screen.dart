@@ -28,7 +28,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
     final raw = _ctrl.text.trim();
     final receipt = raw.startsWith('R-') ? raw : 'R-$raw';
     if (raw.isEmpty) {
-      setState(() => _error = '접수 번호를 입력해 주세요.');
+      setState(() => _error = '메모 번호를 입력해 주세요.');
       return;
     }
     setState(() {
@@ -41,7 +41,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
           .findByReceiptNo(receipt);
       if (!mounted) return;
       if (row == null) {
-        setState(() => _error = '해당 번호의 신고를 찾을 수 없어요.');
+        setState(() => _error = '해당 번호의 메모를 찾을 수 없어요.');
         return;
       }
       await context.push<void>('${AppRoutes.statusLookup}/${row.receiptNo}');
@@ -72,7 +72,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
           },
         ),
         title: const Text(
-          '진행 상황',
+          '내 사안 노트',
           style: TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.w700,
@@ -88,7 +88,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: Text(
-                '접수 번호로 조회',
+                '메모 번호로 찾기',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -100,7 +100,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 14),
               child: Text(
-                '신고 시 발급된 번호를 입력하면 현재 진행 단계를 확인할 수 있어요.',
+                '저장 시 발급된 번호를 입력하면 본인 기기에 저장된 메모를 다시 열어볼 수 있어요.',
                 style: TextStyle(
                   fontSize: 12.5,
                   color: AppTokens.lSub,
@@ -160,7 +160,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: Text(
-                '※ 익명 신고도 번호로 조회 가능해요.',
+                '※ 본인 기기에만 저장된 메모예요. 학교·교육청에 자동 전달되지 않아요.',
                 style: TextStyle(fontSize: 11.5, color: AppTokens.lSub),
               ),
             ),
@@ -188,7 +188,7 @@ class _StatusLookupScreenState extends ConsumerState<StatusLookupScreen> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('조회하기'),
+                      : const Text('메모 열기'),
                 ),
               ),
             ),

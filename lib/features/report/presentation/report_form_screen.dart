@@ -71,8 +71,8 @@ class _ReportFormScreenState extends ConsumerState<ReportFormScreen> {
           .read(inboxRepositoryProvider)
           .create(
             kind: 'milestone',
-            title: '신고가 접수되었어요',
-            detail: '${report.receiptNo} · 곧 사안 조사가 시작돼요',
+            title: '사안 노트를 저장했어요',
+            detail: '${report.receiptNo} · 다음 단계는 직접 단계를 옮기며 정리할 수 있어요',
             receiptNo: report.receiptNo,
           );
       if (!mounted) return;
@@ -110,7 +110,7 @@ class _ReportFormScreenState extends ConsumerState<ReportFormScreen> {
           },
         ),
         title: const Text(
-          '신고하기',
+          '사안 정리하기',
           style: TextStyle(
             fontSize: 15.5,
             fontWeight: FontWeight.w700,
@@ -186,7 +186,7 @@ class _ReportFormScreenState extends ConsumerState<ReportFormScreen> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(_step == 2 ? '제출하기  →' : '다음  →'),
+                      : Text(_step == 2 ? '저장하기  →' : '다음  →'),
                 ),
               ),
             ),
@@ -230,7 +230,7 @@ class _Step0 extends StatelessWidget {
         const _Eyebrow('1단계'),
         const SizedBox(height: 6),
         const Text(
-          '어떤 분이 신고하시나요?',
+          '어떤 분의 사안인가요?',
           style: TextStyle(
             fontSize: 21,
             fontWeight: FontWeight.w800,
@@ -238,6 +238,8 @@ class _Step0 extends StatelessWidget {
             letterSpacing: -0.4,
           ),
         ),
+        const SizedBox(height: 12),
+        const _LocalSaveNotice(),
         const SizedBox(height: 16),
         const _SectionLabel('역할'),
         Wrap(
@@ -480,7 +482,7 @@ class _Step2 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '익명으로 신고',
+                    '이름 없이 메모',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
@@ -488,7 +490,7 @@ class _Step2 extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '신고자의 신원은 학교에 공개되지 않아요.',
+                    '본인 기기 내 메모이므로, 신원이 외부로 공개되지 않아요.',
                     style: TextStyle(fontSize: 11.5, color: AppTokens.lSub),
                   ),
                 ],
@@ -503,6 +505,41 @@ class _Step2 extends StatelessWidget {
 }
 
 // ── 공용 위젯 ───────────────────────────────────────────
+class _LocalSaveNotice extends StatelessWidget {
+  const _LocalSaveNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      decoration: BoxDecoration(
+        color: AppTokens.lTileTint,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTokens.lLine),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, size: 16, color: AppTokens.lPrimaryDeep),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '여기에 정리한 사안 노트는 본인 기기에만 저장돼요. '
+              '학교·교육청·경찰에 자동으로 전달되지 않으니, '
+              '실제 신고는 학교 전담기구 또는 117(학교폭력 신고센터)에 직접 연락해 주세요.',
+              style: TextStyle(
+                fontSize: 11.5,
+                height: 1.5,
+                color: AppTokens.lInk,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _Eyebrow extends StatelessWidget {
   const _Eyebrow(this.text);
   final String text;
